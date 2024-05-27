@@ -1,0 +1,44 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class KeyMouseCombo extends Application {
+
+    private boolean isAKeyPressed = false;
+
+    @Override
+    public void start(Stage primaryStage) {
+        Pane root = new Pane();
+        Scene scene = new Scene(root, 400, 400);
+
+        // Event handler for key press
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode().toString().equals("A")) {
+                isAKeyPressed = true;
+            }
+        });
+
+        // Event handler for key release
+        scene.setOnKeyReleased(event -> {
+            if (event.getCode().toString().equals("A")) {
+                isAKeyPressed = false;
+            }
+        });
+
+        // Event handler for mouse click
+        scene.setOnMouseClicked(event -> {
+            if (isAKeyPressed && event.getButton().toString().equals("PRIMARY")) {
+                System.out.println("Left click while 'A' key is pressed!");
+                // Do something here
+            }
+        });
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}

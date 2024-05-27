@@ -1,0 +1,69 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+public class GuardSystem extends Application {
+    private double lastMouseX;
+    private double lastMouseY;
+    private final double moveThreshold = 2; // Minimum distance to trigger guard change
+
+    @Override
+    public void start(Stage primaryStage) {
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 800, 600);
+
+        Rectangle guard = new Rectangle(50, 50); // Sample guard object
+        guard.setStyle("-fx-fill: gray");
+
+        scene.setOnMouseMoved(event -> {
+            double mouseX = event.getSceneX();
+            double mouseY = event.getSceneY();
+
+            // Calculate the distance moved
+            double distanceX = mouseX - lastMouseX;
+            double distanceY = mouseY - lastMouseY;
+
+            // Calculate the angle of movement
+            double angle = Math.atan2(distanceY, distanceX);
+            double angleDegrees = Math.toDegrees(angle);
+
+            // Update guard direction based on angle
+            if (Math.abs(distanceX) > moveThreshold || Math.abs(distanceY) > moveThreshold) {
+                if (angleDegrees >= -45 && angleDegrees <= 45) {
+                    // Right
+                    System.out.println("Guard moves right");
+                } else if (angleDegrees > 45 && angleDegrees <= 135) {
+                    // Down
+                    System.out.println("Guard moves down");
+                } else if (angleDegrees < -45 && angleDegrees >= -135) {
+                    // Up
+                    System.out.println("Guard moves up");
+                } else {
+                    // Left
+                    System.out.println("Guard moves left");
+                }
+            }
+
+            // Update last mouse position
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+        });
+
+        root.setCenter(guard);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Guard System");
+        primaryStage.show();
+
+        // Initialize last mouse position
+        scene.setOnMousePressed(event -> {
+            lastMouseX = event.getSceneX();
+            lastMouseY = event.getSceneY();
+        });
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}

@@ -1,0 +1,32 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
+
+import java.io.File;
+
+public class MusicPlayer extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Replace "path/to/your/music.mp3" with the actual path to your music file
+        String musicFile = "path/to/your/music.mp3";
+        Media media = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+        // Set the music to loop indefinitely
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
+        // Play the music
+        mediaPlayer.play();
+
+        primaryStage.setTitle("Music Player");
+        primaryStage.setScene(new Scene(new javafx.scene.layout.StackPane(), 400, 300));
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}

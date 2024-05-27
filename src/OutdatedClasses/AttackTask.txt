@@ -1,0 +1,67 @@
+package OutdatedClasses;
+
+import javafx.scene.Scene;
+
+/**
+ This attack system was the first version of it. There were two issues with it.
+ The first was if you pressed a button but failed to let
+ go of the previous button, the new button press could be ignored. This could be fixed by
+ setting the other isPressed variables false every time one presses a new button.
+ 
+ The second issue, which could not be easily fixed, was that pressing keys on the
+ keyboard is not always responsive. You have to press down all the way to register. In
+ a game where milliseconds make a difference, this could be really annoying.
+ */
+@Deprecated
+public class AttackTask {
+    Scene scene = PaintApplication.scene;
+    
+    public void set() {
+        setHandlersForActions();
+    }
+    private void setHandlersForActions() {
+        // Event handlers for key press
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode().toString().equals(Controller.UP)) {
+                Controller.isUpPressed = true;
+            }
+            else if (event.getCode().toString().equals(Controller.LEFT)) {
+                Controller.isLeftPressed = true;
+            }
+            else if (event.getCode().toString().equals(Controller.RIGHT)) {
+                Controller.isRightPressed = true;
+            }
+        });
+
+        // Event handlers for key release
+        scene.setOnKeyReleased(event -> {
+            if (event.getCode().toString().equals(Controller.UP)) {
+                Controller.isUpPressed = false;
+            }
+            else if (event.getCode().toString().equals(Controller.LEFT)) {
+                Controller.isLeftPressed = false;
+            }
+            else if (event.getCode().toString().equals(Controller.RIGHT)) {
+                Controller.isRightPressed = false;
+            }
+
+        });
+
+        // Event handler for mouse click
+        scene.setOnMouseClicked(event -> {
+            if (Controller.isUpPressed && event.getButton().toString().equals("PRIMARY")) {
+                System.out.println("Left click while 'W' key is pressed!");
+                // Do something here
+            }
+            else if (Controller.isLeftPressed && event.getButton().toString().equals("PRIMARY")) {
+                System.out.println("Left click while 'A' key is pressed!");
+                // Do something here
+            }
+            else if (Controller.isRightPressed && event.getButton().toString().equals("PRIMARY")) {
+                System.out.println("Left click while 'D' key is pressed!");
+                // Do something here
+            }
+        });
+    }
+
+}

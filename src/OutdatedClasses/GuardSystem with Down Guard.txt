@@ -1,0 +1,52 @@
+import javafx.scene.Scene;
+
+public class GuardSystem {
+    static private double lastMouseX;
+    static private double lastMouseY;
+    static private final double moveThreshold = 2; // Minimum distance to trigger guard change
+
+
+    public static void setControls(Scene scene) {
+
+
+        scene.setOnMouseMoved(event -> {
+            double mouseX = event.getSceneX();
+            double mouseY = event.getSceneY();
+
+            // Calculate the distance moved
+            double distanceX = mouseX - lastMouseX;
+            double distanceY = mouseY - lastMouseY;
+
+            // Calculate the angle of movement
+            double angle = Math.atan2(distanceY, distanceX);
+            double angleDegrees = Math.toDegrees(angle);
+
+            // Update guard direction based on angle
+            if (Math.abs(distanceX) > moveThreshold || Math.abs(distanceY) > moveThreshold) {
+                if (angleDegrees >= -45 && angleDegrees <= 45) {
+                    // Right
+                    System.out.println("Guard moves right");
+                } else if (angleDegrees > 45 && angleDegrees <= 135) {
+                    // Down
+                    System.out.println("Guard moves down");
+                } else if (angleDegrees < -45 && angleDegrees >= -135) {
+                    // Up
+                    System.out.println("Guard moves up");
+                } else {
+                    // Left
+                    System.out.println("Guard moves left");
+                }
+            }
+
+            // Update last mouse position
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+        });
+
+        // Initialize last mouse position
+        scene.setOnMousePressed(event -> {
+            lastMouseX = event.getSceneX();
+            lastMouseY = event.getSceneY();
+        });
+    }
+}
