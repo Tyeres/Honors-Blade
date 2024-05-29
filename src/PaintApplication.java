@@ -14,7 +14,7 @@ import java.net.Socket;
 
 public class PaintApplication extends Application implements ConnectInfo {
 
-    public final FXMLLoader loader = new FXMLLoader(getClass().getResource("Game Window.fxml"));
+    private final FXMLLoader loader = new FXMLLoader(getClass().getResource("Game Window.fxml"));
     private StackPane stackPane;
     // Scene of the program
     static Scene scene;
@@ -67,8 +67,10 @@ public class PaintApplication extends Application implements ConnectInfo {
                         // Clear the "Connecting to opponent" text when connected
                         clearConnectingText();
 
-                        Controller.setToServer(new ObjectOutputStream(socket.getOutputStream()));
+                        System.out.println("Test1");
                         Controller.setFromServer(new ObjectInputStream(socket.getInputStream()));
+                        System.out.println("Test2");
+                        Controller.setToServer(new ObjectOutputStream(socket.getOutputStream()));
 
                     } catch (IOException e) {
                         // Do nothing. isConnected stays set to false. It keeps trying to connect to server.

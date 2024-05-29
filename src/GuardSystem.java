@@ -6,6 +6,7 @@ import java.io.IOException;
 
 /**
  * This class sends objects to the server and updates the server with the new guard direction.
+ * The game starts with the up guard.
  */
 public class GuardSystem {
     static private boolean canChangeGuard = true;
@@ -19,6 +20,9 @@ public class GuardSystem {
     private static Rectangle fxGuard;
 
     public static void startControls(FXMLLoader loader, Scene scene) {
+        // The game starts with the guard in the up guard.
+        fxGuard = (Rectangle) loader.getNamespace().get("UP_GUARD");
+
         scene.setOnMouseMoved(event -> {
             if (canChangeGuard) {
                 double mouseX = event.getSceneX();
@@ -55,25 +59,21 @@ public class GuardSystem {
             }
         });
     }
+
     private static void setGuard(FXMLLoader loader, int guardStance, String rectangleGuardFXID) {
-        // Tell the client the new guard
+        // Tell the local self the new guard
         character.setGuardStance(guardStance);
 
         // Tell the server the new guard. Send as object because that is what the server is prepared to receive first.
         try {
             Controller.getToServer().writeObject(guardStance);
-        }
-        catch (IOException ioException) {
+        } catch (IOException ioException) {
             System.err.println(ioException + "\nError when sending guardStance to server in GuardSystem.java");
         }
 
         // Visually change the guard
-        try {
-            fxGuard.setVisible(false);
-        } catch (Exception e) {
-                        /* Do nothing. There would be an error for the first time, since
-                         fxGuard is null. After that, there will be no errors. */
-        }
+        fxGuard.setVisible(false);
+
         fxGuard = (Rectangle) loader.getNamespace().get(rectangleGuardFXID);
         fxGuard.setVisible(true);
     }
@@ -81,9 +81,11 @@ public class GuardSystem {
     protected static void setLeftGuard(FXMLLoader loader) {
         setGuard(loader, Controller.LEFT_GUARD, "LEFT_GUARD");
     }
+
     protected static void setUpGuard(FXMLLoader loader) {
         setGuard(loader, Controller.UP_GUARD, "UP_GUARD");
     }
+
     protected static void setRightGuard(FXMLLoader loader) {
         setGuard(loader, Controller.RIGHT_GUARD, "RIGHT_GUARD");
     }
@@ -94,5 +96,9 @@ public class GuardSystem {
 
     public static void setCanChangeGuard(boolean canChangeGuard) {
         GuardSystem.canChangeGuard = canChangeGuard;
+    }
+
+    public static Rectangle getFxGuard() {
+        return fxGuard;
     }
 }

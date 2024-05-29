@@ -23,7 +23,7 @@ public class Character implements Serializable {
         this.hp = hp;
         this.heavyAttack = heavyAttack;
         this.lightAttack = lightAttack;
-        this.guardStance = 0;
+        this.guardStance = Controller.UP_GUARD;
     }
 
     public int getHp() {
@@ -66,10 +66,13 @@ public class Character implements Serializable {
     public void setGuardStance(int guardStance) {
         this.guardStance = guardStance;
     }
-    public void increaseStamina(int amount) {
+    public synchronized void increaseStamina(int amount) {
         this.stamina += amount;
     }
-    public void decreaseStamina(int cost) {
+    public synchronized void decreaseStamina(int cost) {
         this.stamina -= cost;
+    }
+    public void decreaseHealth(int hp) {
+        this.hp -= hp;
     }
 }

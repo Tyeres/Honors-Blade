@@ -65,7 +65,7 @@
                         <Font size="31.0" />
                      </font>
                   </TextField>
-                  <Polygon rotate="180.0" stroke="#ababab" strokeType="INSIDE" strokeWidth="10.0">
+                  <Polygon fx:id="ACTIVE_GUARD" rotate="180.0" stroke="#ababab" strokeType="INSIDE" strokeWidth="10.0">
                     <points>
                       <Double fx:value="-50.0" />
                       <Double fx:value="40.0" />
@@ -88,7 +88,7 @@
                         <Insets left="80.0" top="500.0" />
                      </StackPane.margin>
                   </Rectangle>
-                  <Rectangle fx:id="UP_GUARD" arcHeight="5.0" arcWidth="5.0" fill="#007bee" height="150.0" layoutX="639.0" layoutY="612.0" rotate="90.0" stroke="BLACK" strokeType="OUTSIDE" visible="false" width="10.0">
+                  <Rectangle fx:id="UP_GUARD" arcHeight="5.0" arcWidth="5.0" fill="#007bee" height="150.0" layoutX="639.0" layoutY="612.0" rotate="90.0" stroke="BLACK" strokeType="OUTSIDE" width="10.0">
                      <StackPane.margin>
                         <Insets top="372.0" />
                      </StackPane.margin>
@@ -103,17 +103,17 @@
                         <Double fx:value="-60.0" />
                      </points>
                   </Polygon>
-                  <Rectangle fx:id="ENEMY_RIGHT_GUARD" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="559.0" layoutY="612.0" rotate="26.1" stroke="BLACK" strokeType="OUTSIDE" visible="false" width="10.0">
+                  <Rectangle fx:id="ENEMY_RIGHT_GUARD" arcHeight="5.0" arcWidth="5.0" fill="#b2b2b2" height="150.0" layoutX="559.0" layoutY="612.0" rotate="26.1" stroke="BLACK" strokeType="OUTSIDE" visible="false" width="10.0">
                      <StackPane.margin>
                         <Insets left="80.0" />
                      </StackPane.margin>
                   </Rectangle>
-                  <Rectangle fx:id="ENEMY_LEFT_GUARD" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="559.0" layoutY="612.0" rotate="333.9" stroke="BLACK" strokeType="OUTSIDE" visible="false" width="10.0">
+                  <Rectangle fx:id="ENEMY_LEFT_GUARD" arcHeight="5.0" arcWidth="5.0" fill="#b2b2b2" height="150.0" layoutX="559.0" layoutY="612.0" rotate="333.9" stroke="BLACK" strokeType="OUTSIDE" visible="false" width="10.0">
                      <StackPane.margin>
                         <Insets right="80.0" />
                      </StackPane.margin>
                   </Rectangle>
-                  <Rectangle fx:id="ENEMY_UP_GUARD" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="599.0" layoutY="548.0" rotate="90.0" stroke="BLACK" strokeType="OUTSIDE" visible="false" width="10.0">
+                  <Rectangle fx:id="ENEMY_UP_GUARD" arcHeight="5.0" arcWidth="5.0" fill="#b2b2b2" height="150.0" layoutX="599.0" layoutY="548.0" rotate="90.0" stroke="BLACK" strokeType="OUTSIDE" visible="false" width="10.0">
                      <StackPane.margin>
                         <Insets bottom="128.0" />
                      </StackPane.margin>
