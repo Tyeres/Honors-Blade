@@ -82,6 +82,12 @@ public class GameServer extends Application implements ConnectInfo {
                     ObjectOutputStream toPlayer2Defense = new ObjectOutputStream(player2SocketDefense.getOutputStream());
                     ObjectInputStream fromPlayer2Defense = new ObjectInputStream(player2SocketDefense.getInputStream());
 
+                    new Thread(()-> {
+                        serverCombat(toPlayer1Combat, fromPlayer1Combat, toPlayer2Combat, fromPlayer2Combat);
+                    }).start();
+                    new Thread(() -> {
+                        serverDefense(toPlayer1Defense, fromPlayer1Defense, toPlayer2Defense, fromPlayer2Defense);
+                    }).start();
 
                     player1ServerSocket1.close();
                     player1ServerSocket2.close();
@@ -100,7 +106,12 @@ public class GameServer extends Application implements ConnectInfo {
         }).start();
     }
 
-    private static void serverCombat() {
+    private static void serverCombat (ObjectOutputStream toPlayer1Combat, ObjectInputStream fromPlayer1Combat,
+                                     ObjectOutputStream toPlayer2Combat, ObjectInputStream fromPlayer2Combat) {
+
+    }
+    private static void serverDefense (ObjectOutputStream toPlayer1Defense, ObjectInputStream fromPlayer1Defense,
+                                       ObjectOutputStream toPlayer2Defense, ObjectInputStream fromPlayer2Defense) {
 
     }
 }

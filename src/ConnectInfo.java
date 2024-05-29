@@ -8,5 +8,4 @@ public interface ConnectInfo {
     // Player 2
     int COMBAT_PORT_2 = 8003;
     int DEFENSE_PORT_2 = 8004;
-
 }
