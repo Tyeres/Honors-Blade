@@ -67,9 +67,7 @@ public class PaintApplication extends Application implements ConnectInfo {
                         // Clear the "Connecting to opponent" text when connected
                         clearConnectingText();
 
-                        System.out.println("Test1");
                         Controller.setFromServer(new ObjectInputStream(socket.getInputStream()));
-                        System.out.println("Test2");
                         Controller.setToServer(new ObjectOutputStream(socket.getOutputStream()));
 
                     } catch (IOException e) {
