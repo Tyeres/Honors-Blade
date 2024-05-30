@@ -59,7 +59,9 @@ public class PaintApplication extends Application implements ConnectInfo {
 
                 // Loop trying to connect to server
                 while (!isConnected) {
-                    try (Socket socket = new Socket(SERVER_IP, COMBAT_PORT)) {
+                    try  {
+                        // DO NOT CLOSE THIS SOCKET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        Socket socket = new Socket(SERVER_IP, COMBAT_PORT);
 
                         // To reach here, we must have connected. Set isConnected to true so that the loop ends.
                         isConnected = true;
@@ -70,7 +72,10 @@ public class PaintApplication extends Application implements ConnectInfo {
                         Controller.setFromServer(new ObjectInputStream(socket.getInputStream()));
                         Controller.setToServer(new ObjectOutputStream(socket.getOutputStream()));
 
-                    } catch (IOException e) {
+                        // Give the server time to create the next server port
+                        Thread.sleep(1000);
+
+                    } catch (Exception e) {
                         // Do nothing. isConnected stays set to false. It keeps trying to connect to server.
                     }
                 } // Connecting to server loop ends here.
