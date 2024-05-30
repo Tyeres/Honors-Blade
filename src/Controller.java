@@ -2,6 +2,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Controller {
+    private static int combatPort;
+    private static int defensePort;
 
     public static final int NO_STAMINA_ACTION = -1;
     public static final int BLOCKED_ACTION = 0;
@@ -54,5 +56,21 @@ public class Controller {
 
     public static void setFromServer(ObjectInputStream fromServer) {
         Controller.fromServer = fromServer;
+    }
+
+    public static int getCombatPort() {
+        return combatPort;
+    }
+
+    public static void setCombatPort(int combatPort) {
+        Controller.combatPort = combatPort;
+    }
+
+    public static int getDefensePort() {
+        return defensePort;
+    }
+
+    public static void setDefensePort(int defensePort) {
+        Controller.defensePort = defensePort;
     }
 }

@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -57,11 +58,20 @@ public class PaintApplication extends Application implements ConnectInfo {
                 // Assume false
                 boolean isConnected = false;
 
+                byte i = 0;
                 // Loop trying to connect to server
                 while (!isConnected) {
                     try  {
+                        // Make sure you do not set the ports more than once.
+                        if (i == 0) {
+                            setPorts();
+                            i++;
+                        }
+                        // Give the server time to create the new ports, and also make sure that the program is not trying to connect too fast.
+                        Thread.sleep(1000);
+
                         // DO NOT CLOSE THIS SOCKET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        Socket socket = new Socket(SERVER_IP, COMBAT_PORT);
+                        Socket socket = new Socket(SERVER_IP, Controller.getCombatPort());
 
                         // To reach here, we must have connected. Set isConnected to true so that the loop ends.
                         isConnected = true;
@@ -90,5 +100,21 @@ public class PaintApplication extends Application implements ConnectInfo {
             // Clear the "Connecting to opponent" text when connected
             stackPane.getChildren().remove((javafx.scene.control.TextField) loader.getNamespace().get("connectingText"));
         });
+    }
+    private static void setPorts() throws IOException {
+        Socket socket = new Socket(SERVER_IP, STARTING_PORT);
+        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+
+        int playerType = dataInputStream.readInt();
+
+        if (playerType == 1) {
+            Controller.setCombatPort(COMBAT_PORT);
+            Controller.setDefensePort(DEFENSE_PORT);
+        }
+        else {
+            Controller.setCombatPort(COMBAT_PORT_2);
+            Controller.setDefensePort(DEFENSE_PORT_2);
+        }
+        socket.close();
     }
 }

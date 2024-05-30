@@ -44,6 +44,14 @@ public class GameServer extends Application implements ConnectInfo {
             while (true) {
 
                 try {
+                    // This makes it so that the game will not start until both players are connected.
+                    // This is because the program will not start the other ports until the method finishes.
+                    // BRING THIS BACK WHEN DONE THE GAME!!!!!!!!!!!
+//                    givePlayersRespectivePorts();
+
+                    // REMOVE THIS METHOD WHEN DONE THE GAME!!!!!!!!!!!!!!!!!!!!!!
+                    giveImmediatePlayer1Port();
+
                     // Connect to the attack interface for player 1
                     ServerSocket player1ServerSocket1 = new ServerSocket(COMBAT_PORT);
                     Socket player1SocketCombat = player1ServerSocket1.accept();
@@ -62,6 +70,8 @@ public class GameServer extends Application implements ConnectInfo {
                     ObjectOutputStream toPlayer1Defense = new ObjectOutputStream(player1SocketDefense.getOutputStream());
                     ObjectInputStream fromPlayer1Defense = new ObjectInputStream(player1SocketDefense.getInputStream());
 
+                    // REMOVE THIS METHOD WHEN DONE THE GAME!!!!!!!!!!!!!!!!!!!!!!
+                    giveImmediatePlayer2Port();
 
                     // Connect to the attack interface for player 2
                     ServerSocket player2ServerSocket1 = new ServerSocket(COMBAT_PORT_2);
@@ -113,5 +123,49 @@ public class GameServer extends Application implements ConnectInfo {
     private static void serverDefense (ObjectOutputStream toPlayer1Defense, ObjectInputStream fromPlayer1Defense,
                                        ObjectOutputStream toPlayer2Defense, ObjectInputStream fromPlayer2Defense) {
 
+    }
+
+    /**
+     * This gives the two players their respective ports. This makes it so that there is only one version of the client.
+     * This makes it so that the game will not start until both players are connected.
+     * This is because the program will not start the other ports until the method finishes.
+     */
+    private static void givePlayersRespectivePorts() {
+        try (ServerSocket serverSocket = new ServerSocket(STARTING_PORT)) {
+            DataOutputStream dataOutputStream1 = new DataOutputStream(serverSocket.accept().getOutputStream());
+
+            // Tell the client that it is player 1
+            dataOutputStream1.writeInt(1);
+
+
+            DataOutputStream dataOutputStream2 = new DataOutputStream(serverSocket.accept().getOutputStream());
+
+            // Tell the client that is it player 2
+            dataOutputStream2.writeInt(2);
+        } catch (IOException e) {
+
+        }
+    }
+    @Deprecated
+    private static void giveImmediatePlayer1Port() {
+        try (ServerSocket serverSocket = new ServerSocket(STARTING_PORT)) {
+            DataOutputStream dataOutputStream1 = new DataOutputStream(serverSocket.accept().getOutputStream());
+
+            // Tell the client that it is player 1
+            dataOutputStream1.writeInt(1);
+        } catch (IOException e) {
+
+        }
+    }
+    @Deprecated
+    private static void giveImmediatePlayer2Port() {
+        try (ServerSocket serverSocket = new ServerSocket(STARTING_PORT)) {
+            DataOutputStream dataOutputStream2 = new DataOutputStream(serverSocket.accept().getOutputStream());
+
+            // Tell the client that is it player 2
+            dataOutputStream2.writeInt(2);
+        } catch (IOException e) {
+
+        }
     }
 }

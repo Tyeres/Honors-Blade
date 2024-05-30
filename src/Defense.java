@@ -37,7 +37,7 @@ public class Defense implements ConnectInfo {
 
         new Thread(() -> {
             // A separate port must be used so that a conflict does not occur in Combat.java
-            try (Socket socket = new Socket(SERVER_IP, DEFENSE_PORT)) {
+            try (Socket socket = new Socket(SERVER_IP, Controller.getDefensePort())) {
 
                 ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
 
