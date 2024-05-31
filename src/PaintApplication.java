@@ -101,7 +101,7 @@ public class PaintApplication extends Application implements ConnectInfo {
             stackPane.getChildren().remove((javafx.scene.control.TextField) loader.getNamespace().get("connectingText"));
         });
     }
-    private static void setPorts() throws IOException {
+    private static void setPorts() throws IOException, InterruptedException {
         Socket socket = new Socket(SERVER_IP, STARTING_PORT);
         DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 
@@ -114,6 +114,8 @@ public class PaintApplication extends Application implements ConnectInfo {
         else {
             Controller.setCombatPort(COMBAT_PORT_2);
             Controller.setDefensePort(DEFENSE_PORT_2);
+            // Give the server time to connect to player 1 and then to get ready for the player 2 connection
+            Thread.sleep(1000);
         }
         socket.close();
     }
