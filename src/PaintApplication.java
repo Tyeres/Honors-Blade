@@ -68,7 +68,7 @@ public class PaintApplication extends Application implements ConnectInfo {
                             i++;
                         }
                         // Give the server time to create the new ports, and also make sure that the program is not trying to connect too fast.
-                        Thread.sleep(1000);
+                        Thread.sleep(50);
 
                         // DO NOT CLOSE THIS SOCKET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         Socket socket = new Socket(SERVER_IP, Controller.getCombatPort());
@@ -83,7 +83,7 @@ public class PaintApplication extends Application implements ConnectInfo {
                         Controller.setToServer(new ObjectOutputStream(socket.getOutputStream()));
 
                         // Give the server time to create the next server port
-                        Thread.sleep(1000);
+                        Thread.sleep(50);
 
                     } catch (Exception e) {
                         // Do nothing. isConnected stays set to false. It keeps trying to connect to server.
@@ -110,12 +110,14 @@ public class PaintApplication extends Application implements ConnectInfo {
         if (playerType == 1) {
             Controller.setCombatPort(COMBAT_PORT);
             Controller.setDefensePort(DEFENSE_PORT);
+            Controller.setInputPort(INPUT_PORT);
         }
         else {
             Controller.setCombatPort(COMBAT_PORT_2);
             Controller.setDefensePort(DEFENSE_PORT_2);
+            Controller.setInputPort(INPUT_PORT_2);
             // Give the server time to connect to player 1 and then to get ready for the player 2 connection
-            Thread.sleep(1000);
+            Thread.sleep(50);
         }
         socket.close();
     }

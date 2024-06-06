@@ -4,6 +4,7 @@ import java.io.ObjectOutputStream;
 public class Controller {
     private static int combatPort;
     private static int defensePort;
+    private static int inputPort;
 
     public static final int NO_STAMINA_ACTION = -1;
     public static final int BLOCKED_ACTION = 0;
@@ -72,5 +73,13 @@ public class Controller {
 
     public static void setDefensePort(int defensePort) {
         Controller.defensePort = defensePort;
+    }
+
+    public static int getInputPort() {
+        return inputPort;
+    }
+
+    public static void setInputPort(int inputPort) {
+        Controller.inputPort = inputPort;
     }
 }

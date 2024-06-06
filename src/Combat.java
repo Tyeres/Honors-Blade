@@ -1,4 +1,3 @@
-import ObjectsToSend.Feint;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,11 +9,14 @@ import javafx.scene.shape.Polygon;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
-public class Combat {
+public class Combat implements ConnectInfo{
     private Combat() {
     }
 
+    private static ObjectOutputStream toServerInput;
     private static boolean canAttack = true;
 
     static Character character = Controller.getCharacter();
@@ -25,6 +27,8 @@ public class Combat {
         // Starts the guard system for the opponent and starts showing attack indicators
         Defense.startDefense(loader);
         StaminaRegeneration.start();
+        setInputConnection();
+
 
         // Starts the mouse buttons
         scene.setOnMouseClicked(event -> {
@@ -42,13 +46,7 @@ public class Combat {
         scene.setOnKeyPressed(event -> {
             if (event.getCode().toString().equals("Q")) {
                 try {
-                    // For the server, when this is received, use a boolean for the heavy attack window.
-                    // The boolean value changes when this is received. When the attack window ends, if the
-                    // boolean value is set to false, do not take away damage from opponent
-                    // and do not allow to be parried.
-                    Controller.getToServer().writeObject(new Feint());
-
-
+                    toServerInput.writeObject("Q");
                 } catch (IOException exception) {
                     System.err.println(exception);
                 }
@@ -146,6 +144,12 @@ public class Combat {
                         // Give the enemy player time to punish you for the parry
                         Thread.sleep(500);
                     }
+                    else if (typeOfAction == Controller.FEINT_ACTION) {
+                        // Decrease stamina
+                        if (character.getStamina() - 3 < 0)
+                            character.setStamina(0);
+                        else character.decreaseStamina(3);
+                    }
                     // Player has parried his opponent.
                     else if (typeOfAction == Controller.ACTIVE_PARRY_ACTION) {
                         // Let the player know he was the one who parried and that he himself was not parried.
@@ -201,6 +205,19 @@ public class Combat {
             Platform.runLater(() -> {
                 activeGuard.setFill(Color.BLACK);
             });
+        }).start();
+    }
+    private static void setInputConnection() {
+        new Thread(() -> {
+            try {
+                // The Defense port was connected right beforehand;
+                // give time for the server to start up its server for the input.
+                Thread.sleep(50);
+                Socket inputSocket = new Socket(SERVER_IP ,Controller.getInputPort());
+                toServerInput = new ObjectOutputStream(inputSocket.getOutputStream());
+            } catch (InterruptedException | IOException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
     }
 }

@@ -30,7 +30,7 @@ public class GameServer extends Application implements ConnectInfo {
         Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Server");
-        primaryStage.setOnCloseRequest(e->{
+        primaryStage.setOnCloseRequest(e -> {
             System.exit(0);
         });
         primaryStage.show();
@@ -58,7 +58,7 @@ public class GameServer extends Application implements ConnectInfo {
 
                     Platform.runLater(() -> {
                         textArea.appendText("Player 1 IPV4: " +
-                                player1SocketCombat.getInetAddress().toString() +"\n");
+                                player1SocketCombat.getInetAddress().toString() + "\n");
                     });
                     ObjectOutputStream toPlayer1Combat = new ObjectOutputStream(player1SocketCombat.getOutputStream());
                     ObjectInputStream fromPlayer1Combat = new ObjectInputStream(player1SocketCombat.getInputStream());
@@ -79,7 +79,7 @@ public class GameServer extends Application implements ConnectInfo {
 
                     Platform.runLater(() -> {
                         textArea.appendText("Player 2 IPV4: " +
-                                player2SocketCombat.getInetAddress().toString() +"\n");
+                                player2SocketCombat.getInetAddress().toString() + "\n");
                     });
                     ObjectOutputStream toPlayer2Combat = new ObjectOutputStream(player2SocketCombat.getOutputStream());
                     ObjectInputStream fromPlayer2Combat = new ObjectInputStream(player2SocketCombat.getInputStream());
@@ -92,17 +92,18 @@ public class GameServer extends Application implements ConnectInfo {
                     ObjectOutputStream toPlayer2Defense = new ObjectOutputStream(player2SocketDefense.getOutputStream());
                     ObjectInputStream fromPlayer2Defense = new ObjectInputStream(player2SocketDefense.getInputStream());
 
-                    new Thread(()-> {
-                        serverCombat(toPlayer1Combat, fromPlayer1Combat, toPlayer2Combat, fromPlayer2Combat);
-                    }).start();
-                    new Thread(() -> {
-                        serverDefense(toPlayer1Defense, fromPlayer1Defense, toPlayer2Defense, fromPlayer2Defense);
-                    }).start();
 
-                    player1ServerSocket1.close();
-                    player1ServerSocket2.close();
-                    player2ServerSocket1.close();
-                    player2ServerSocket2.close();
+                    // Start the server's combat
+                    ServerCombat.startServerCombat(toPlayer1Combat, fromPlayer1Combat, toPlayer2Combat, fromPlayer2Combat);
+
+
+                    serverDefense(toPlayer1Defense, fromPlayer1Defense, toPlayer2Defense, fromPlayer2Defense);
+
+
+//                    player1ServerSocket1.close();
+//                    player1ServerSocket2.close();
+//                    player2ServerSocket1.close();
+//                    player2ServerSocket2.close();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -116,12 +117,9 @@ public class GameServer extends Application implements ConnectInfo {
         }).start();
     }
 
-    private static void serverCombat (ObjectOutputStream toPlayer1Combat, ObjectInputStream fromPlayer1Combat,
-                                     ObjectOutputStream toPlayer2Combat, ObjectInputStream fromPlayer2Combat) {
 
-    }
-    private static void serverDefense (ObjectOutputStream toPlayer1Defense, ObjectInputStream fromPlayer1Defense,
-                                       ObjectOutputStream toPlayer2Defense, ObjectInputStream fromPlayer2Defense) {
+    private static void serverDefense(ObjectOutputStream toPlayer1Defense, ObjectInputStream fromPlayer1Defense,
+                                      ObjectOutputStream toPlayer2Defense, ObjectInputStream fromPlayer2Defense) {
 
     }
 
@@ -146,7 +144,7 @@ public class GameServer extends Application implements ConnectInfo {
 
         }
     }
-    @Deprecated
+
     private static void giveImmediatePlayer1Port() {
         try (ServerSocket serverSocket = new ServerSocket(STARTING_PORT)) {
             DataOutputStream dataOutputStream1 = new DataOutputStream(serverSocket.accept().getOutputStream());
@@ -157,7 +155,7 @@ public class GameServer extends Application implements ConnectInfo {
 
         }
     }
-    @Deprecated
+
     private static void giveImmediatePlayer2Port() {
         try (ServerSocket serverSocket = new ServerSocket(STARTING_PORT)) {
             DataOutputStream dataOutputStream2 = new DataOutputStream(serverSocket.accept().getOutputStream());
