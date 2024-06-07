@@ -12,6 +12,7 @@ public class Controller {
     public static final int PARRY_ACTION  = 2;
     public static final int ACTIVE_PARRY_ACTION = 3;
     public static final int FEINT_ACTION = 4;
+    public static final int HIT_ACTION = 5;
 
 
     private static final Character character = new Character();

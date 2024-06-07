@@ -102,21 +102,25 @@ public class ServerCombat {
                             toOpponent1Combat.writeInt(Controller.NO_STAMINA_ACTION);
                             // If player has enough stamina
                         } else {
-
+                            // This sets the start for the feint window and resets it.
+                            setFeint(playerType, false);
 
                             // Wait for the attack to land go through
                             // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
                             Thread.sleep(action.getDuration() / 3);
 
-                            // This starts the parry window.
-                            // If a right click has been used while this was open, then getBeenParried should read as true
-                            setParryWindow(playerType, true);
+                            // Do not open the parry window if the player feints
+                            if (!getFeint(playerType)) {
+                                // This starts the parry window.
+                                // If a right click has been used while this was open, then getBeenParried should read as true
+                                setParryWindow(playerType, true);
 
-                            // Parry window is open for two thirds of the attack length
-                            Thread.sleep(action.getDuration() * 2L / 3);
+                                // Parry window is open for two thirds of the attack length
+                                Thread.sleep(action.getDuration() * 2L / 3);
 
 
-                            setParryWindow(playerType, false);
+                                setParryWindow(playerType, false);
+                            }
 
 
                             int enemyStance = returnEnemyGuard(playerType);
@@ -126,8 +130,6 @@ public class ServerCombat {
 
                             if (getFeint(playerType)) {
                                 toOpponent1Combat.writeInt(Controller.FEINT_ACTION);
-                                // Reset value
-                                setFeint(playerType, false);
                             }
                             // Attack was parried
                             else if (getBeenParried(playerType)) {

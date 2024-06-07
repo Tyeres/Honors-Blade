@@ -5,11 +5,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * The server must be prepared to receive an object (and attack or a feint) and then an int
@@ -35,13 +36,9 @@ public class GameServer extends Application implements ConnectInfo {
         });
         primaryStage.show();
 
-        // Only allow for 50 games to run per server.
-        ExecutorService executorService = Executors.newFixedThreadPool(50);
 
         // Run loop in thread
         new Thread(() -> {
-
-            while (true) {
 
                 try {
                     // This makes it so that the game will not start until both players are connected.
@@ -67,11 +64,26 @@ public class GameServer extends Application implements ConnectInfo {
                     ServerSocket player1ServerSocket2 = new ServerSocket(DEFENSE_PORT);
                     Socket player1SocketDefense = player1ServerSocket2.accept();
 
+                    System.out.println("Here1");
                     ObjectOutputStream toPlayer1Defense = new ObjectOutputStream(player1SocketDefense.getOutputStream());
+                    System.out.println("Here2");
                     ObjectInputStream fromPlayer1Defense = new ObjectInputStream(player1SocketDefense.getInputStream());
+                    System.out.println("Here3");
+
+
+                    ServerSocket player1ServerSocketInput = new ServerSocket(INPUT_PORT); // Player 1
+
+                    Socket player1InputSocket = player1ServerSocketInput.accept();
+
+                    ObjectInputStream fromPlayer1 = new ObjectInputStream(player1InputSocket.getInputStream());
+
+                    ServerReadInput.run(fromPlayer1, 1);
+
+
 
                     // REMOVE THIS METHOD WHEN DONE THE GAME!!!!!!!!!!!!!!!!!!!!!!
                     giveImmediatePlayer2Port();
+
 
                     // Connect to the attack interface for player 2
                     ServerSocket player2ServerSocket1 = new ServerSocket(COMBAT_PORT_2);
@@ -92,12 +104,20 @@ public class GameServer extends Application implements ConnectInfo {
                     ObjectOutputStream toPlayer2Defense = new ObjectOutputStream(player2SocketDefense.getOutputStream());
                     ObjectInputStream fromPlayer2Defense = new ObjectInputStream(player2SocketDefense.getInputStream());
 
+                    ServerSocket player2ServerSocketInput = new ServerSocket(INPUT_PORT_2); // Player 2
+                    Socket player2 = player2ServerSocketInput.accept();
+
+
+                    ObjectInputStream fromPlayer2 = new ObjectInputStream(player2.getInputStream());
+
+                    ServerReadInput.run(fromPlayer2, 2);
+
 
                     // Start the server's combat
                     ServerCombat.startServerCombat(toPlayer1Combat, fromPlayer1Combat, toPlayer2Combat, fromPlayer2Combat);
 
-
-                    serverDefense(toPlayer1Defense, fromPlayer1Defense, toPlayer2Defense, fromPlayer2Defense);
+                    // Start the server's defense
+                    ServerDefense.start(toPlayer1Defense, fromPlayer1Defense, toPlayer2Defense, fromPlayer2Defense);
 
 
 //                    player1ServerSocket1.close();
@@ -107,21 +127,10 @@ public class GameServer extends Application implements ConnectInfo {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
-                // Run in a thread so that the server could technically run multiple games.
-                Runnable task = new Thread(() -> {
-
-                });
-                executorService.execute(task);
-            }
         }).start();
     }
 
 
-    private static void serverDefense(ObjectOutputStream toPlayer1Defense, ObjectInputStream fromPlayer1Defense,
-                                      ObjectOutputStream toPlayer2Defense, ObjectInputStream fromPlayer2Defense) {
-
-    }
 
     /**
      * This gives the two players their respective ports. This makes it so that there is only one version of the client.

@@ -26,8 +26,8 @@ public class Combat implements ConnectInfo{
         GuardSystem.startControls(loader, scene);
         // Starts the guard system for the opponent and starts showing attack indicators
         Defense.startDefense(loader);
-        StaminaRegeneration.start();
         setInputConnection();
+        StaminaRegeneration.start();
 
 
         // Starts the mouse buttons
@@ -212,12 +212,16 @@ public class Combat implements ConnectInfo{
             try {
                 // The Defense port was connected right beforehand;
                 // give time for the server to start up its server for the input.
-                Thread.sleep(50);
-                Socket inputSocket = new Socket(SERVER_IP ,Controller.getInputPort());
+                Thread.sleep(1000);
+                Socket inputSocket = new Socket(SERVER_IP, Controller.getInputPort());
                 toServerInput = new ObjectOutputStream(inputSocket.getOutputStream());
             } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
         }).start();
+    }
+
+    public static ObjectOutputStream getToServerInput() {
+        return toServerInput;
     }
 }

@@ -67,6 +67,7 @@ public class GuardSystem {
         // Tell the server the new guard. Send as object because that is what the server is prepared to receive first.
         try {
             Controller.getToServer().writeObject(guardStance);
+//            Combat.getToServerInput().writeObject(guardStance);
         } catch (IOException ioException) {
             System.err.println(ioException + "\nError when sending guardStance to server in GuardSystem.java");
         }
