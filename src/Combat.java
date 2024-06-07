@@ -22,11 +22,11 @@ public class Combat implements ConnectInfo{
     static Character character = Controller.getCharacter();
 
     public static void start(FXMLLoader loader, Scene scene) {
+        setInputConnection();
         // Starts the guard system for switching guard
         GuardSystem.startControls(loader, scene);
         // Starts the guard system for the opponent and starts showing attack indicators
         Defense.startDefense(loader);
-        setInputConnection();
         StaminaRegeneration.start();
 
 
@@ -212,7 +212,7 @@ public class Combat implements ConnectInfo{
             try {
                 // The Defense port was connected right beforehand;
                 // give time for the server to start up its server for the input.
-                Thread.sleep(1000);
+                Thread.sleep(50);
                 Socket inputSocket = new Socket(SERVER_IP, Controller.getInputPort());
                 toServerInput = new ObjectOutputStream(inputSocket.getOutputStream());
             } catch (InterruptedException | IOException e) {

@@ -9,6 +9,8 @@ import java.io.IOException;
  * The game starts with the up guard.
  */
 public class GuardSystem {
+    static byte i = 1;
+
     static private boolean canChangeGuard = true;
     static private double lastMouseX;
     static private double lastMouseY;
@@ -66,10 +68,15 @@ public class GuardSystem {
 
         // Tell the server the new guard. Send as object because that is what the server is prepared to receive first.
         try {
-            Controller.getToServer().writeObject(guardStance);
-//            Combat.getToServerInput().writeObject(guardStance);
+            Combat.getToServerInput().writeObject(guardStance);
         } catch (IOException ioException) {
             System.err.println(ioException + "\nError when sending guardStance to server in GuardSystem.java");
+        } catch (NullPointerException nullPointerException) {
+            // This will initially be null a few times, but it should go away. Only notify if it happens more than twenty times.
+            i++;
+            if (i % 20 == 0) {
+                throw nullPointerException;
+            }
         }
 
         // Visually change the guard

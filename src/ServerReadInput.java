@@ -4,12 +4,18 @@ import java.io.ObjectInputStream;
 public class ServerReadInput implements ConnectInfo {
 
 
+
     public static void run(ObjectInputStream fromPlayer, int playerType) {
         new Thread(() -> {
             while (true) {
                 try {
-                    String key = (String) fromPlayer.readObject();
-                    if (key.equals("Q")) {
+                    Object key = fromPlayer.readObject();
+
+                    if (key.equals(Controller.UP_GUARD) || key.equals(Controller.LEFT_GUARD) || key.equals(Controller.RIGHT_GUARD)) {
+                        ServerDefense.setPlayerGuard((int) key, playerType);
+
+                    }
+                    else if (key.equals("Q")) {
                         if (playerType == 1) {
                             ServerCombat.setFeint1(true);
                         }
@@ -22,6 +28,5 @@ public class ServerReadInput implements ConnectInfo {
                 }
             }
         }).start();
-
     }
 }

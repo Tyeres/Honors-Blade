@@ -39,7 +39,6 @@ public class GameServer extends Application implements ConnectInfo {
 
         // Run loop in thread
         new Thread(() -> {
-
                 try {
                     // This makes it so that the game will not start until both players are connected.
                     // This is because the program will not start the other ports until the method finishes.

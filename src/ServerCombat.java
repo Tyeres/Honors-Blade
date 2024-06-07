@@ -160,14 +160,14 @@ public class ServerCombat {
 
     private static int returnEnemyGuard(int playerType) {
         if (playerType == 1)
-            return ServerDefense.getPlayer2Guard();
-        return ServerDefense.getPlayer1Guard();
+            return ServerDefense.getPlayer2Guard().get();
+        return ServerDefense.getPlayer1Guard().get();
     }
 
     private static int returnPlayerGuard(int playerType) {
         if (playerType == 1)
-            return ServerDefense.getPlayer1Guard();
-        return ServerDefense.getPlayer2Guard();
+            return ServerDefense.getPlayer1Guard().get();
+        return ServerDefense.getPlayer2Guard().get();
     }
 
     public static void setParryWindow(int playerType, boolean value) {
