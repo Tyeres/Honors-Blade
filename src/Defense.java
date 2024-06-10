@@ -76,10 +76,10 @@ public class Defense implements ConnectInfo {
                             // Play audio
                             playHitAudio();
                         }
-                        if (fromServer.readInt() == Controller.BLOCKED_ACTION) {
+                        else if (fromServer.readInt() == Controller.BLOCKED_ACTION) {
                             playBlockedAudio();
                         }
-                        // It's a parry action
+                        // It's a parry action. You parried your opponent.
                         else {
                             // Play audio
                             playParryAudio();

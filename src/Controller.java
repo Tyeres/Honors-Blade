@@ -2,6 +2,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Controller {
+    // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
+    static final double PARRY_WINDOW_CLOSED_LENGTH = 1.0 / 3;
+    // Parry window is open for two thirds of the attack length
+    static final double PARRY_WINDOW_OPENED_LENGTH = 2.0 / 3;
+
     private static int combatPort;
     private static int defensePort;
     private static int inputPort;

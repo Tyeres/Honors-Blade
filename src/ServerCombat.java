@@ -36,7 +36,6 @@ public class ServerCombat {
 
         new Thread(() -> {
             while (true) {
-
                 try {
                     // The first received object should always be an Attack
                     Attack action = (Attack) fromOpponent1Combat.readObject();
@@ -50,17 +49,15 @@ public class ServerCombat {
                             toOpponent1Combat.writeInt(Controller.NO_STAMINA_ACTION);
                             // If player has enough stamina
                         } else {
+                            Thread runEnemyIndicatorThread = ServerDefense.sendEnemyPlayerMyAttack(action, playerType);
 
                             // Wait for the attack to land go through
-                            // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
-                            Thread.sleep(action.getDuration() / 3);
+                            Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_CLOSED_LENGTH));
 
                             // This starts the parry window.
                             // If a right click has been used while this was open, then getBeenParried should read as true
                             setParryWindow(playerType, true);
-
-                            // Parry window is open for two thirds of the attack length
-                            Thread.sleep(action.getDuration() * 2L / 3);
+                            Thread.sleep((long)(action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
 
                             setParryWindow(playerType, false);
 
@@ -70,20 +67,25 @@ public class ServerCombat {
 
                             // Write action
 
+                            // Make sure that the enemy indicator has finished
+                            runEnemyIndicatorThread.join();
 
                             // Attack was parried
                             if (getBeenParried(playerType)) {
                                 toOpponent1Combat.writeInt(Controller.PARRY_ACTION);
                                 // Reset beenParried boolean
                                 setBeenParried(playerType, false);
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.PARRY_ACTION);
                             }
                             // Attack lands
                             else if (enemyStance != myStance) {
                                 toOpponent1Combat.writeInt(Controller.ATTACK_ACTION);
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ATTACK_ACTION);
                             }
                             // Attack is blocked
-                            else if (enemyStance == myStance) {
+                            else {
                                 toOpponent1Combat.writeInt(Controller.BLOCKED_ACTION);
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.BLOCKED_ACTION);
                             }
                         }
                     }
@@ -105,9 +107,11 @@ public class ServerCombat {
                             // This sets the start for the feint window and resets it.
                             setFeint(playerType, false);
 
+                            Thread runEnemyIndicatorThread = ServerDefense.sendEnemyPlayerMyAttack(action, playerType);
+
                             // Wait for the attack to land go through
                             // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
-                            Thread.sleep(action.getDuration() / 3);
+                            Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_CLOSED_LENGTH));
 
                             // Do not open the parry window if the player feints
                             if (!getFeint(playerType)) {
@@ -116,7 +120,7 @@ public class ServerCombat {
                                 setParryWindow(playerType, true);
 
                                 // Parry window is open for two thirds of the attack length
-                                Thread.sleep(action.getDuration() * 2L / 3);
+                                Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
 
 
                                 setParryWindow(playerType, false);
@@ -128,22 +132,30 @@ public class ServerCombat {
 
                             // Write action
 
+                            // Make sure that the enemy indicator has finished
+                            runEnemyIndicatorThread.join();
+
                             if (getFeint(playerType)) {
                                 toOpponent1Combat.writeInt(Controller.FEINT_ACTION);
+                                // Do not tell the opponent player. They will know by the lack of information.
+                                // The attack indicator should just go away.
                             }
                             // Attack was parried
                             else if (getBeenParried(playerType)) {
                                 toOpponent1Combat.writeInt(Controller.PARRY_ACTION);
                                 // Reset beenParried boolean
                                 setBeenParried(playerType, false);
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.PARRY_ACTION);
                             }
                             // Attack lands
                             else if (enemyStance != myStance) {
                                 toOpponent1Combat.writeInt(Controller.ATTACK_ACTION);
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ATTACK_ACTION);
                             }
                             // Attack is blocked
-                            else if (enemyStance == myStance) {
+                            else {
                                 toOpponent1Combat.writeInt(Controller.BLOCKED_ACTION);
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.BLOCKED_ACTION);
                             }
                         }
                     }

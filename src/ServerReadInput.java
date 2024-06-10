@@ -13,7 +13,6 @@ public class ServerReadInput implements ConnectInfo {
 
                     if (key.equals(Controller.UP_GUARD) || key.equals(Controller.LEFT_GUARD) || key.equals(Controller.RIGHT_GUARD)) {
                         ServerDefense.setPlayerGuard((int) key, playerType);
-
                     }
                     else if (key.equals("Q")) {
                         if (playerType == 1) {
