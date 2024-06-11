@@ -1,4 +1,3 @@
-import ObjectsToSend.Attack;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
@@ -29,42 +28,6 @@ public class ServerDefense {
         player2Guard.addListener(e->{
             tellClientEnemyChangeGuard(toPlayer2Defense, 2);
         });
-    }
-    public static Thread sendEnemyPlayerMyAttack(Attack attack, int playerType) {
-        Thread indicatorThread = new Thread(() -> {
-            if (playerType == 1) {
-                try {
-                    // Send to player2Defense because the opponent needs to be receiving it
-                    toPlayer2Defense.writeObject(Controller.INCOMING_ATTACK);
-                    Thread.sleep((long) (attack.getDuration() * Controller.PARRY_WINDOW_CLOSED_LENGTH));
-                    // The client is waiting to receive a value to know when the parry window opens. It doesn't matter what the value is.
-                    toPlayer2Defense.writeInt(0);
-                    Thread.sleep((long) (attack.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
-                    // The client is waiting to receive a value to know when the attack ends. It doesn't matter what the value is.
-                    toPlayer2Defense.writeInt(0);
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            // If player 2
-            else {
-                try {
-                    // Send to player1Defense because the opponent needs to be receiving it
-                    toPlayer1Defense.writeObject(Controller.INCOMING_ATTACK);
-                    Thread.sleep((long) (attack.getDuration() * Controller.PARRY_WINDOW_CLOSED_LENGTH));
-                    // The client is waiting to receive a value to know when the parry window opens. It doesn't matter what the value is.
-                    toPlayer1Defense.writeInt(0);
-                    Thread.sleep((long) (attack.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
-                    // The client is waiting to receive a value to know when the attack ends. It doesn't matter what the value is.
-                    toPlayer1Defense.writeInt(0);
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
-        });
-        indicatorThread.start();
-        return indicatorThread;
     }
 
     private static void tellClientEnemyChangeGuard(ObjectOutputStream toOpponent2Defense,int playerType) {

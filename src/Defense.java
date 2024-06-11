@@ -52,11 +52,12 @@ public class Defense implements ConnectInfo {
                             // Change the indicator color
                             enemyFXGuard.setFill(Color.web(INCOMING_ATTACK_COLOR));
                         });
-                        // Wait for parry window.
-                        fromServer.readInt();
-                        Platform.runLater(() -> {
-                            enemyFXGuard.setFill(Color.web(PARRY_WINDOW_COLOR));
-                        });
+                        // Wait for parry window. If -1 is sent, the parry window will not open since it was a feint.
+                        if (fromServer.readInt() == 0) {
+                            Platform.runLater(() -> {
+                                enemyFXGuard.setFill(Color.web(PARRY_WINDOW_COLOR));
+                            });
+                        }
 
                         // Attack End
                         fromServer.readInt();
@@ -67,16 +68,16 @@ public class Defense implements ConnectInfo {
 
 
                         // Read the type of attack.
-
+                        int typeOfAttack = fromServer.readInt();
                         //  If the attack hits.
-                        if (fromServer.readInt() == Controller.ATTACK_ACTION) {
+                        if (typeOfAttack == Controller.ATTACK_ACTION) {
                             /* Read the damage from the server and decrease health.
                             If you block it, there will still be chip damage if it's a heavy. */
                             character.decreaseHealth(fromServer.readInt());
                             // Play audio
                             playHitAudio();
                         }
-                        else if (fromServer.readInt() == Controller.BLOCKED_ACTION) {
+                        else if (typeOfAttack == Controller.BLOCKED_ACTION) {
                             playBlockedAudio();
                         }
                         // It's a parry action. You parried your opponent.
