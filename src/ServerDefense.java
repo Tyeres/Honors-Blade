@@ -21,18 +21,19 @@ public class ServerDefense {
 
         // Player 1 tells player 2 about guard change
         player1Guard.addListener(e->{
-            tellClientEnemyChangeGuard(toPlayer1Defense, 1);
+            tellClientEnemyChangeGuard(toPlayer2Defense, 1);
         });
 
         // Player 2 tells player 1 about guard change
         player2Guard.addListener(e->{
-            tellClientEnemyChangeGuard(toPlayer2Defense, 2);
+            tellClientEnemyChangeGuard(toPlayer1Defense, 2);
         });
     }
 
     private static void tellClientEnemyChangeGuard(ObjectOutputStream toOpponent2Defense,int playerType) {
         try {
-            toOpponent2Defense.writeObject(getPlayerGuard(playerType));
+            toOpponent2Defense.writeInt(getPlayerGuard(playerType));
+            toOpponent2Defense.flush();
         } catch (IOException e) {
             throw new RuntimeException();
         }
@@ -53,10 +54,10 @@ public class ServerDefense {
         else
             ServerDefense.player2Guard.set(playerGuard);
     }
-    public static IntegerProperty getPlayerGuard(int playerType) {
+    public static int getPlayerGuard(int playerType) {
         if (playerType == 1)
-            return player1Guard;
-        return player2Guard;
+            return player1Guard.get();
+        return player2Guard.get();
     }
     public static ObjectOutputStream getOpponentDefenseToServer(int playerType) {
         if (playerType == 2)

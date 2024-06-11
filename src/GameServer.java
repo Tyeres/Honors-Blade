@@ -63,11 +63,8 @@ public class GameServer extends Application implements ConnectInfo {
                     ServerSocket player1ServerSocket2 = new ServerSocket(DEFENSE_PORT);
                     Socket player1SocketDefense = player1ServerSocket2.accept();
 
-                    System.out.println("Here1");
                     ObjectOutputStream toPlayer1Defense = new ObjectOutputStream(player1SocketDefense.getOutputStream());
-                    System.out.println("Here2");
                     ObjectInputStream fromPlayer1Defense = new ObjectInputStream(player1SocketDefense.getInputStream());
-                    System.out.println("Here3");
 
 
                     ServerSocket player1ServerSocketInput = new ServerSocket(INPUT_PORT); // Player 1
@@ -103,7 +100,9 @@ public class GameServer extends Application implements ConnectInfo {
                     ObjectOutputStream toPlayer2Defense = new ObjectOutputStream(player2SocketDefense.getOutputStream());
                     ObjectInputStream fromPlayer2Defense = new ObjectInputStream(player2SocketDefense.getInputStream());
 
+
                     ServerSocket player2ServerSocketInput = new ServerSocket(INPUT_PORT_2); // Player 2
+
                     Socket player2 = player2ServerSocketInput.accept();
 
 
