@@ -72,9 +72,9 @@ public class GuardSystem {
         } catch (IOException ioException) {
             System.err.println(ioException + "\nError when sending guardStance to server in GuardSystem.java");
         } catch (NullPointerException nullPointerException) {
-            // This will initially be null a few times, but it should go away. Only notify if it happens more than twenty times.
+            // This will initially be null a few times, but it should go away. Only notify if it happens more than thirty times.
             i++;
-            if (i % 20 == 0) {
+            if (i % 30 == 0) {
                 throw nullPointerException;
             }
         }

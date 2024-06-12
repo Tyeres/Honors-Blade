@@ -46,7 +46,7 @@ public class Defense implements ConnectInfo {
                 while (true) {
                     int enemyAction = fromServer.readInt();
 
-                    // Incoming attack. The guard won't change during this time.
+                    // Incoming attack. The guard won't change during this time; so, you can use this in the same if & if else statement lineup
                     if (enemyAction == Controller.INCOMING_ATTACK) {
                         Platform.runLater(() -> {
                             // Change the indicator color
@@ -66,9 +66,9 @@ public class Defense implements ConnectInfo {
                         });
                         // Incoming attack over
 
-
                         // Read the type of attack.
                         int typeOfAttack = fromServer.readInt();
+
                         //  If the attack hits.
                         if (typeOfAttack == Controller.ATTACK_ACTION) {
                             /* Read the damage from the server and decrease health.
@@ -79,6 +79,7 @@ public class Defense implements ConnectInfo {
                         }
                         else if (typeOfAttack == Controller.BLOCKED_ACTION) {
                             playBlockedAudio();
+                            System.out.println("yo");
                         }
                         // It's a parry action. You parried your opponent.
                         else {

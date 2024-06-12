@@ -67,8 +67,10 @@ public class Combat implements ConnectInfo{
                 try {
                     // Send to the server the light attack object to handle
                     Controller.getToServer().writeObject(character.getLightAttack());
+                    Controller.getToServer().flush();
                     // Tell the server how much stamina I have
                     Controller.getToServer().writeInt(character.getStamina());
+                    Controller.getToServer().flush();
 
                     // The server tells my action. Did I land the attack? Was I blocked? Did I parry instead?
                     // Did I even have enough stamina to attack?
@@ -87,7 +89,7 @@ public class Combat implements ConnectInfo{
                         character.decreaseStamina(Controller.LIGHT_STAMINA_COST);
                     }
                     // Player has been parried
-                    else if (typeOfAction == Controller.PARRY_ACTION) {
+                    else if (typeOfAction == Controller.PARRIED_ACTION) {
                         Defense.playParryAudio();
                         character.decreaseStamina(Controller.LIGHT_STAMINA_COST + 5);
                         // Give the enemy player time to punish you for the parry
@@ -118,8 +120,10 @@ public class Combat implements ConnectInfo{
                     // Send to the server the heavy attack object to handle
                     // We do not know if this was a heavy or a parry. Let the server find this out.
                     Controller.getToServer().writeObject(character.getHeavyAttack());
+                    Controller.getToServer().flush();
                     // Tell the server how much stamina I have
                     Controller.getToServer().writeInt(character.getStamina());
+                    Controller.getToServer().flush();
 
                     // The server tells my action. Did I land a heavy? Was I blocked? Did I parry instead?
                     // Did I even have enough stamina to attack?
@@ -138,7 +142,7 @@ public class Combat implements ConnectInfo{
                         Defense.playBlockedAudio();
                     }
                     // Player has been parried
-                    else if (typeOfAction == Controller.PARRY_ACTION) {
+                    else if (typeOfAction == Controller.PARRIED_ACTION) {
                         Defense.playParryAudio();
                         character.decreaseStamina(Controller.HEAVY_STAMINA_COST + 3);
                         // Give the enemy player time to punish you for the parry
