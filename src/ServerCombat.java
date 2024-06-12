@@ -50,7 +50,6 @@ public class ServerCombat {
                             toOpponent1Combat.flush();
                             // If player has enough stamina
                         } else {
-                            System.out.println("1");
 
                             // This is so that the opponent sees the start of the attack indicator.
                             ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.INCOMING_ATTACK);
@@ -64,7 +63,7 @@ public class ServerCombat {
                             setParryWindow(playerType, true);
                             // The opponent client is waiting to receive a value to know when the parry window opens.
                             ServerDefense.getOpponentDefenseToServer(playerType).writeInt(0);
-//                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             Thread.sleep((long)(action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
 
                             setParryWindow(playerType, false);
@@ -77,7 +76,6 @@ public class ServerCombat {
                             int myStance = returnPlayerGuard(playerType);
 
                             // Write action
-                            System.out.println("2");
 
                             // Attack was parried
                             if (getBeenParried(playerType)) {
@@ -100,7 +98,6 @@ public class ServerCombat {
                                 toOpponent1Combat.flush();
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.BLOCKED_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
-                                System.out.println("3");
                             }
                         }
                     }
@@ -128,7 +125,7 @@ public class ServerCombat {
 
 
                             // This is so that the opponent sees the start of the attack indicator.
-                            ServerDefense.getOpponentDefenseToServer(playerType).writeObject(Controller.INCOMING_ATTACK);
+                            ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.INCOMING_ATTACK);
                             ServerDefense.getOpponentDefenseToServer(playerType).flush();
 
                             // Wait for the attack to land go through

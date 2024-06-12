@@ -79,7 +79,6 @@ public class Defense implements ConnectInfo {
                         }
                         else if (typeOfAttack == Controller.BLOCKED_ACTION) {
                             playBlockedAudio();
-                            System.out.println("yo");
                         }
                         // It's a parry action. You parried your opponent.
                         else {
@@ -101,7 +100,7 @@ public class Defense implements ConnectInfo {
                     }
                 }
             } catch (IOException ioException) {
-                System.err.println(ioException);
+                throw new RuntimeException();
             }
         }).start();
     }
