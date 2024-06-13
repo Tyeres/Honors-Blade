@@ -105,13 +105,13 @@ public class ServerCombat {
                     // Read heavy attack
                     else if (action instanceof HeavyAttack) {
                         // If enemy parry window is open
-                        // Check first if it's a parry instead of an attack
-                        if (getOpponentParryWindow(playerType)) {
+                        // Check first if it's a parry instead of an attack and that the guards are equal
+                        if (returnPlayerGuard(playerType) == returnEnemyGuard(playerType) && getOpponentParryWindow(playerType)) {
                             // The opponent has been parried
                             setOpponentBeenParried(playerType, true);
                             // Tell the one who parries that the parry was successful
-                            ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
-                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                            toOpponent1Combat.writeInt(Controller.ACTIVE_PARRY_ACTION);
+                            toOpponent1Combat.flush();
                         }
 
                         // It's an attack

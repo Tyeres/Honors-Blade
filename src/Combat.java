@@ -93,7 +93,7 @@ public class Combat implements ConnectInfo{
                         Defense.playParryAudio();
                         character.decreaseStamina(Controller.LIGHT_STAMINA_COST + 5);
                         // Give the enemy player time to punish you for the parry
-                        Thread.sleep(1200);
+                        Thread.sleep(Controller.LIGHT_PARRY_STUN_LENGTH);
                     }
                     // Play error if out of stamina.
                     else if (typeOfAction == Controller.NO_STAMINA_ACTION) {
@@ -146,7 +146,7 @@ public class Combat implements ConnectInfo{
                         Defense.playParryAudio();
                         character.decreaseStamina(Controller.HEAVY_STAMINA_COST + 3);
                         // Give the enemy player time to punish you for the parry
-                        Thread.sleep(500);
+                        Thread.sleep(Controller.HEAVY_PARRY_STUN_LENGTH);
                     }
                     else if (typeOfAction == Controller.FEINT_ACTION) {
                         // Decrease stamina

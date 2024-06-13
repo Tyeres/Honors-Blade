@@ -6,6 +6,8 @@ public class Controller {
     static final double PARRY_WINDOW_CLOSED_LENGTH = 1.0 / 3;
     // Parry window is open for two thirds of the attack length
     static final double PARRY_WINDOW_OPENED_LENGTH = 2.0 / 3;
+    static final int LIGHT_PARRY_STUN_LENGTH = 1200;
+    static final int HEAVY_PARRY_STUN_LENGTH = 500;
 
     private static int combatPort;
     private static int defensePort;
@@ -17,7 +19,6 @@ public class Controller {
     public static final int PARRIED_ACTION  = 2;
     public static final int ACTIVE_PARRY_ACTION = 3;
     public static final int FEINT_ACTION = 4;
-    public static final int HIT_ACTION = 5;
 
 
     private static final Character character = new Character();

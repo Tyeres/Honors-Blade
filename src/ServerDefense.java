@@ -21,12 +21,13 @@ public class ServerDefense {
 
         // Player 1 tells player 2 about guard change
         player1Guard.addListener(e->{
-            tellClientEnemyChangeGuard(toPlayer2Defense, 1);
+                tellClientEnemyChangeGuard(toPlayer2Defense, 1);
+
         });
 
         // Player 2 tells player 1 about guard change
         player2Guard.addListener(e->{
-            tellClientEnemyChangeGuard(toPlayer1Defense, 2);
+                tellClientEnemyChangeGuard(toPlayer1Defense, 2);
         });
     }
 
