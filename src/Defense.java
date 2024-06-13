@@ -52,8 +52,10 @@ public class Defense implements ConnectInfo {
                             // Change the indicator color
                             enemyFXGuard.setFill(Color.web(INCOMING_ATTACK_COLOR));
                         });
-                        // Wait for parry window. If -1 is sent, the parry window will not open since it was a feint.
-                        if (fromServer.readInt() == 0) {
+                        // Wait for parry window. If feint action is sent, the parry window will not open since it was a feint.
+                        int didEnemyFeint = fromServer.readInt();
+                        // 0 means that the enemy did not feint
+                        if (didEnemyFeint == 0) {
                             Platform.runLater(() -> {
                                 enemyFXGuard.setFill(Color.web(PARRY_WINDOW_COLOR));
                             });
@@ -67,7 +69,13 @@ public class Defense implements ConnectInfo {
                         // Incoming attack over
 
                         // Read the type of attack.
-                        int typeOfAttack = fromServer.readInt();
+                        int typeOfAttack;
+                        if (didEnemyFeint == 0) {
+                            // Enemy did not feint. Read the type of attack
+                            typeOfAttack = fromServer.readInt();
+                        }
+                        // Enemy feinted. Set the type of attack to a feint action. There is no if case for it because nothing should be done for it.
+                        else typeOfAttack = Controller.FEINT_ACTION;
 
                         //  If the attack hits.
                         if (typeOfAttack == Controller.ATTACK_ACTION) {
@@ -79,6 +87,9 @@ public class Defense implements ConnectInfo {
                         }
                         else if (typeOfAttack == Controller.BLOCKED_ACTION) {
                             playBlockedAudio();
+                        }
+                        else if (typeOfAttack == Controller.FEINT_ACTION) {
+                            playFeintAudio();
                         }
                         // It's a parry action. You parried your opponent.
                         else {
@@ -137,5 +148,8 @@ public class Defense implements ConnectInfo {
     }
     public static void playParryAudio() {
         playAudio("./src/Audio/parry.mp3");
+    }
+    public static void playFeintAudio() {
+        playAudio("./src/Audio/feint sound.mp3");
     }
 }

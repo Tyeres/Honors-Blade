@@ -153,6 +153,8 @@ public class Combat implements ConnectInfo{
                         if (character.getStamina() - 3 < 0)
                             character.setStamina(0);
                         else character.decreaseStamina(3);
+
+                        Defense.playFeintAudio();
                     }
                     // Player has parried his opponent.
                     else if (typeOfAction == Controller.ACTIVE_PARRY_ACTION) {

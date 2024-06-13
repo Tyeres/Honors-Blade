@@ -89,6 +89,7 @@ public class ServerCombat {
                             // Attack lands
                             else if (enemyStance != myStance) {
                                 toOpponent1Combat.writeInt(Controller.ATTACK_ACTION);
+                                toOpponent1Combat.flush();
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ATTACK_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             }
@@ -152,7 +153,7 @@ public class ServerCombat {
                             else {
                                 // The enemy is waiting to receive a value to know when the parry window opens.
                                 // Send -1 so that the enemy knows never to open it.
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(-1);
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.FEINT_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             }
 
