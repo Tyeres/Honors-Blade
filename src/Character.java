@@ -73,6 +73,7 @@ public class Character implements Serializable {
         this.stamina -= cost;
     }
     public void decreaseHealth(int hp) {
+        System.out.println(hp + " decreased in health");
         this.hp -= hp;
     }
 }

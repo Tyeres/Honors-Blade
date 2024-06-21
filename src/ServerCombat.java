@@ -7,6 +7,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ServerCombat {
+    // These two objects are serializable. So, they cannot have static objects within them. So, we will create new objects to use the attack numbers.
+    public static final LightAttack lightAttack = new LightAttack();
+    public static final HeavyAttack heavyAttack = new HeavyAttack();
 
     static boolean parryWindow1 = false;
     static boolean parryWindow2 = false;
@@ -83,7 +86,8 @@ public class ServerCombat {
                                 toOpponent1Combat.flush();
                                 // Reset beenParried boolean
                                 setBeenParried(playerType, false);
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.PARRIED_ACTION);
+                                // Tell the enemy player that he parried me
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             }
                             // Attack lands
@@ -91,6 +95,9 @@ public class ServerCombat {
                                 toOpponent1Combat.writeInt(Controller.ATTACK_ACTION);
                                 toOpponent1Combat.flush();
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ATTACK_ACTION);
+                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                // Tell the player how much damage to take. It's a light attack.
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(lightAttack.getSide());
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             }
                             // Attack is blocked
@@ -152,7 +159,7 @@ public class ServerCombat {
                             }
                             else {
                                 // The enemy is waiting to receive a value to know when the parry window opens.
-                                // Send -1 so that the enemy knows never to open it.
+                                // Send FEINT_ACTION so that the enemy knows never to open it.
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.FEINT_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             }
@@ -180,7 +187,8 @@ public class ServerCombat {
                                 toOpponent1Combat.flush();
                                 // Reset beenParried boolean
                                 setBeenParried(playerType, false);
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.PARRIED_ACTION);
+                                // Tell the enemy player that he parried me
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             }
                             // Attack lands
@@ -188,6 +196,9 @@ public class ServerCombat {
                                 toOpponent1Combat.writeInt(Controller.ATTACK_ACTION);
                                 toOpponent1Combat.flush();
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ATTACK_ACTION);
+                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                // Tell the player how much damage to take. It's a heavy attack.
+                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(heavyAttack.getSide());
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
                             }
                             // Attack is blocked

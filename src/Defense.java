@@ -81,6 +81,7 @@ public class Defense implements ConnectInfo {
                         if (typeOfAttack == Controller.ATTACK_ACTION) {
                             /* Read the damage from the server and decrease health.
                             If you block it, there will still be chip damage if it's a heavy. */
+                            // READING FROM SERVER
                             character.decreaseHealth(fromServer.readInt());
                             // Play audio
                             playHitAudio();
@@ -91,10 +92,8 @@ public class Defense implements ConnectInfo {
                         else if (typeOfAttack == Controller.FEINT_ACTION) {
                             playFeintAudio();
                         }
-                        // It's a parry action. You parried your opponent.
+                        // It's an active parry action. You parried your opponent.
                         else {
-                            // Play audio
-                            playParryAudio();
                         }
                     }
                     // Up guard
@@ -142,14 +141,18 @@ public class Defense implements ConnectInfo {
     }
     public static void playHitAudio() {
         playAudio("./src/Audio/hit.mp3");
+        System.out.println("Hit Audio Played");
     }
     public static void playBlockedAudio() {
         playAudio("./src/Audio/block.mp3");
+        System.out.println("Blocked Audio Played");
     }
     public static void playParryAudio() {
         playAudio("./src/Audio/parry.mp3");
+        System.out.println("Parry Audio Played");
     }
     public static void playFeintAudio() {
         playAudio("./src/Audio/feint sound.mp3");
+        System.out.println("Feint Audio Played");
     }
 }

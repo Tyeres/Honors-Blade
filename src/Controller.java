@@ -27,6 +27,7 @@ public class Controller {
     public final static int LEFT_GUARD = 11;
     public final static int RIGHT_GUARD = 12;
     public final static int INCOMING_ATTACK = 13;
+    public final static int NO_GUARD = 14;
 
     private static ObjectOutputStream toServer;
     private static ObjectInputStream fromServer;
