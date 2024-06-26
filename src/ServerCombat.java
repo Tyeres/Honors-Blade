@@ -40,7 +40,7 @@ public class ServerCombat {
         new Thread(() -> {
             while (true) {
                 try {
-                    // The first received object should always be an Attack
+                    // The first received object should always be an Attack. This is the player's attack, not the player's opponent's attack.
                     Attack action = (Attack) fromOpponent1Combat.readObject();
                     // The second "object" received should always be an int
                     int playerStamina = fromOpponent1Combat.readInt();
@@ -67,7 +67,7 @@ public class ServerCombat {
                             // The opponent client is waiting to receive a value to know when the parry window opens.
                             ServerDefense.getOpponentDefenseToServer(playerType).writeInt(0);
                             ServerDefense.getOpponentDefenseToServer(playerType).flush();
-                            Thread.sleep((long)(action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
+                            Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
 
                             setParryWindow(playerType, false);
 
@@ -89,6 +89,9 @@ public class ServerCombat {
                                 // Tell the enemy player that he parried me
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
+
+                                // Change the guard to no-guard so that the player can be punished.
+                                openGuardTemporarily(playerType, Controller.LIGHT_PARRY_STUN_LENGTH);
                             }
                             // Attack lands
                             else if (enemyStance != myStance) {
@@ -156,8 +159,7 @@ public class ServerCombat {
 
 
                                 setParryWindow(playerType, false);
-                            }
-                            else {
+                            } else {
                                 // The enemy is waiting to receive a value to know when the parry window opens.
                                 // Send FEINT_ACTION so that the enemy knows never to open it.
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.FEINT_ACTION);
@@ -190,6 +192,9 @@ public class ServerCombat {
                                 // Tell the enemy player that he parried me
                                 ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
                                 ServerDefense.getOpponentDefenseToServer(playerType).flush();
+
+                                // Change the guard to no-guard so that the player can be punished.
+                                openGuardTemporarily(playerType, Controller.HEAVY_PARRY_STUN_LENGTH);
                             }
                             // Attack lands
                             else if (enemyStance != myStance) {
@@ -292,4 +297,43 @@ public class ServerCombat {
             setFeint2(value);
     }
 
+    /**
+     * This is used to make the guard go away temporarily when parried. This makes it very easy to punish the opponent without needing
+     * to change guards.
+     */
+    protected static void openGuardTemporarily(int playerType, long duration) throws InterruptedException {
+
+        // Save the original guard so that it's not forgotten
+        int temp = ServerDefense.getPlayerGuard(playerType);
+        // This makes it so that when the guard changes, the client will not hear anything about it.
+        ServerDefense.setSilentlyChangeGuard(true, playerType);
+        // Change the guard to no-guard so that the player can be punished.
+        ServerDefense.setPlayerGuard(Controller.NO_GUARD, playerType);
+        // Wait for the attack duration to end
+        Thread.sleep(duration);
+
+        // Set back to original guard
+        ServerDefense.setPlayerGuard(temp, playerType);
+
+        // Release. This allows the enemy client to hear about guard changes again.
+        ServerDefense.setSilentlyChangeGuard(false, playerType);
+    }
+
+    /**
+     * This method was going to be used in addition to the openGuardTemporarily. It was going to be used for heavy attacks in case the player
+     * feinted. I was going to make the guard go away during attacks too, but the issue is that the defensive guard and the attacking guard is
+     * shared in the one guardStance variable. Making the guard go away during an attack would make it so that all attacks would go through.
+     * The solution would be to create two separate guard variables for each player, but I do not think this is a big enough deal to
+     * make such a change.
+     */
+    @Deprecated
+    protected static int openGuardIndefinitely(int playerType) {
+        int guardStance = ServerDefense.getPlayerGuard(playerType);
+        // This makes it so that when the guard changes, the client will not hear anything about it.
+        ServerDefense.setSilentlyChangeGuard(true, playerType);
+        // Change the guard to no-guard so that the player can be punished.
+        ServerDefense.setPlayerGuard(Controller.NO_GUARD, playerType);
+        // Return the original guard stance so that it isn't forgotten.
+        return guardStance;
+    }
 }

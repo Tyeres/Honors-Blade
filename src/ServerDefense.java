@@ -6,6 +6,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ServerDefense {
+    // Used for silently changing the guard (the clients to receive any data about it. It's only server-side.)
+    // Only run if it's set NOT to silently run. That's why they are set to false by default.
+    private static boolean silentGuardChange1 = false;
+    private static boolean silentGuardChange2 = false;
+
     // The game starts with the guards pointing up
     static private final IntegerProperty player1Guard = new SimpleIntegerProperty(Controller.UP_GUARD);
     static private final IntegerProperty player2Guard = new SimpleIntegerProperty(Controller.UP_GUARD);
@@ -21,12 +26,18 @@ public class ServerDefense {
 
         // Player 1 tells player 2 about guard change
         player1Guard.addListener(e->{
-                tellClientEnemyChangeGuard(toPlayer2Defense, 1);
+            // Only run if it's set NOT to silently run
+                if (!silentGuardChange1) {
+                    tellClientEnemyChangeGuard(toPlayer2Defense, 1);
+                }
         });
 
         // Player 2 tells player 1 about guard change
         player2Guard.addListener(e->{
-                tellClientEnemyChangeGuard(toPlayer1Defense, 2);
+            // Only run if it's set NOT to silently run
+                if (!silentGuardChange2) {
+                    tellClientEnemyChangeGuard(toPlayer1Defense, 2);
+                }
         });
     }
 
@@ -37,6 +48,13 @@ public class ServerDefense {
         } catch (IOException e) {
             throw new RuntimeException();
         }
+    }
+    // Change the values back to false when done. False for NOT silently changing the guard.
+    public static void setSilentlyChangeGuard(boolean value, int playerType) {
+        if (playerType == 1) {
+            silentGuardChange1 = value;
+        }
+        else silentGuardChange2 = value;
     }
 
     public static IntegerProperty getPlayer1Guard() {
