@@ -88,6 +88,8 @@ public class Defense implements ConnectInfo {
                         }
                         else if (typeOfAttack == Controller.BLOCKED_ACTION) {
                             playBlockedAudio();
+                            // Read for chip damage. If the attack is a light attack, the chip damage is 0.
+                            character.decreaseHealth(fromServer.readInt());
                         }
                         else if (typeOfAttack == Controller.FEINT_ACTION) {
                             playFeintAudio();

@@ -1,7 +1,14 @@
+import ObjectsToSend.HeavyAttack;
+import ObjectsToSend.LightAttack;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Controller {
+    // These two objects are serializable. So, they cannot have static objects within them. So, we will create new objects to use the attack numbers.
+    public static final LightAttack lightAttack = new LightAttack();
+    public static final HeavyAttack heavyAttack = new HeavyAttack();
+
     // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
     static final double PARRY_WINDOW_CLOSED_LENGTH = 1.0 / 3;
     // Parry window is open for two thirds of the attack length

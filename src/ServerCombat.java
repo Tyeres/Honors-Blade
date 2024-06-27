@@ -7,9 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ServerCombat {
-    // These two objects are serializable. So, they cannot have static objects within them. So, we will create new objects to use the attack numbers.
-    public static final LightAttack lightAttack = new LightAttack();
-    public static final HeavyAttack heavyAttack = new HeavyAttack();
+
 
     private static boolean parryWindow1 = false;
     private static boolean parryWindow2 = false;
@@ -102,7 +100,11 @@ public class ServerCombat {
                                 ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.ATTACK_ACTION);
                                 ServerDefense.getOpponentDefenseToClient(playerType).flush();
                                 // Tell the opponent player how much damage to take. It's a light attack.
-                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(lightAttack.getSide());
+                                if (myStance == Controller.UP_GUARD) {
+                                    ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.lightAttack.getTop());
+                                } else {
+                                    ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.lightAttack.getSide());
+                                }
                                 ServerDefense.getOpponentDefenseToClient(playerType).flush();
                                 // Do not let the enemy player do any damage temporarily. NO HYPER ARMOR :)
                                 new Thread(()->{
@@ -120,6 +122,8 @@ public class ServerCombat {
                                 toOpponent1Combat.writeInt(Controller.BLOCKED_ACTION);
                                 toOpponent1Combat.flush();
                                 ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.BLOCKED_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(action.getChip());
                                 ServerDefense.getOpponentDefenseToClient(playerType).flush();
                             }
                             // The attack was interrupted
@@ -222,7 +226,11 @@ public class ServerCombat {
                                 ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.ATTACK_ACTION);
                                 ServerDefense.getOpponentDefenseToClient(playerType).flush();
                                 // Tell the opponent player how much damage to take. It's a heavy attack.
-                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(heavyAttack.getSide());
+                                if (myStance == Controller.UP_GUARD) {
+                                    ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.heavyAttack.getTop());
+                                } else {
+                                    ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.heavyAttack.getSide());
+                                }
                                 ServerDefense.getOpponentDefenseToClient(playerType).flush();
                                 // Do not let the enemy player do any damage temporarily. NO HYPER ARMOR :)
                                 new Thread(()->{
@@ -240,6 +248,8 @@ public class ServerCombat {
                                 toOpponent1Combat.writeInt(Controller.BLOCKED_ACTION);
                                 toOpponent1Combat.flush();
                                 ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.BLOCKED_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(action.getChip());
                                 ServerDefense.getOpponentDefenseToClient(playerType).flush();
                             }
                             // The attack was interrupted
