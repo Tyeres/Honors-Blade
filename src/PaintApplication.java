@@ -43,10 +43,15 @@ public class PaintApplication extends Application implements ConnectInfo {
         primaryStage.setTitle("Honor's Blade");
 
         primaryStage.setFullScreen(true);
-        primaryStage.setFullScreenExitHint("");
+        primaryStage.setFullScreenExitHint("Press ESC to exit the game");
 
         // Show the stage
         primaryStage.show();
+//        scene.setOnKeyPressed(e -> {
+//            if (e.getCode() == KeyCode.ESCAPE) {
+//                System.exit(0);
+//            }
+//        });
         connectGame();
         primaryStage.setOnCloseRequest(e->{
             System.exit(0);
@@ -79,8 +84,8 @@ public class PaintApplication extends Application implements ConnectInfo {
                         // Clear the "Connecting to opponent" text when connected
                         clearConnectingText();
 
-                        Controller.setFromServer(new ObjectInputStream(socket.getInputStream()));
-                        Controller.setToServer(new ObjectOutputStream(socket.getOutputStream()));
+                        Controller.setFromCombatServer(new ObjectInputStream(socket.getInputStream()));
+                        Controller.setToCombatServer(new ObjectOutputStream(socket.getOutputStream()));
 
                         // Give the server time to create the next server port
                         Thread.sleep(50);

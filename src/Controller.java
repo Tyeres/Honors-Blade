@@ -31,6 +31,8 @@ public class Controller {
 
 
     private static final Character character = new Character();
+    // This is used to keep track of the enemy's HP. It should initially match the HP of your player too.
+    private static int enemyCharacterHP = character.getHp();
 
     public final static int UP_GUARD = 10;
     public final static int LEFT_GUARD = 11;
@@ -38,8 +40,8 @@ public class Controller {
     public final static int INCOMING_ATTACK = 13;
     public final static int NO_GUARD = 14;
 
-    private static ObjectOutputStream toServer;
-    private static ObjectInputStream fromServer;
+    private static ObjectOutputStream toCombatServer;
+    private static ObjectInputStream fromCombatServer;
 
     public static final int HEAVY_STAMINA_COST = 5;
     public static final int LIGHT_STAMINA_COST = 3;
@@ -60,20 +62,20 @@ public class Controller {
         return character;
     }
 
-    public static ObjectOutputStream getToServer() {
-        return toServer;
+    public static ObjectOutputStream getToCombatServer() {
+        return toCombatServer;
     }
 
-    public static ObjectInputStream getFromServer() {
-        return fromServer;
+    public static ObjectInputStream getFromCombatServer() {
+        return fromCombatServer;
     }
 
-    public static void setToServer(ObjectOutputStream toServer) {
-        Controller.toServer = toServer;
+    public static void setToCombatServer(ObjectOutputStream toCombatServer) {
+        Controller.toCombatServer = toCombatServer;
     }
 
-    public static void setFromServer(ObjectInputStream fromServer) {
-        Controller.fromServer = fromServer;
+    public static void setFromCombatServer(ObjectInputStream fromCombatServer) {
+        Controller.fromCombatServer = fromCombatServer;
     }
 
     public static int getCombatPort() {
@@ -98,5 +100,15 @@ public class Controller {
 
     public static void setInputPort(int inputPort) {
         Controller.inputPort = inputPort;
+    }
+
+    public static int getEnemyCharacterHP() {
+        return enemyCharacterHP;
+    }
+
+    public static void decreaseEnemyCharacterHP(int damage) {
+        if (damage > 0) {
+            Controller.enemyCharacterHP -= damage;
+        }
     }
 }

@@ -9,7 +9,6 @@ import javafx.scene.shape.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -41,7 +40,6 @@ public class Defense implements ConnectInfo {
             try (Socket socket = new Socket(SERVER_IP, Controller.getDefensePort())) {
 
                 ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
-                ObjectOutputStream toServer = new ObjectOutputStream(socket.getOutputStream());
 
                 while (true) {
                     int enemyAction = fromServer.readInt();

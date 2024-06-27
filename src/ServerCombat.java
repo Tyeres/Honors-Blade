@@ -26,16 +26,13 @@ public class ServerCombat {
                                          ObjectOutputStream toPlayer2Combat, ObjectInputStream fromPlayer2Combat) {
 
         // For player 1
-        calculateAttack(toPlayer1Combat, fromPlayer1Combat,
-                toPlayer2Combat, fromPlayer2Combat, 1);
+        calculateAttack(toPlayer1Combat, fromPlayer1Combat, 1);
 
         // For player 2
-        calculateAttack(toPlayer2Combat, fromPlayer2Combat,
-                toPlayer1Combat, fromPlayer1Combat, 2);
+        calculateAttack(toPlayer2Combat, fromPlayer2Combat, 2);
     }
 
-    private static void calculateAttack(ObjectOutputStream toOpponent1Combat, ObjectInputStream fromOpponent1Combat,
-                                        ObjectOutputStream toOpponent2Combat, ObjectInputStream fromOpponent2Combat, int playerType) {
+    private static void calculateAttack(ObjectOutputStream toOpponent1Combat, ObjectInputStream fromOpponent1Combat, int playerType) {
 
         new Thread(() -> {
             while (true) {
@@ -265,7 +262,8 @@ public class ServerCombat {
                     // A feint should only be acted upon if received during a heavy attack.
 
                 } catch (IOException | ClassNotFoundException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("A player has disconnected. See ServerCombat.java");
+                    System.exit(0);
                 }
             }
         }).start();

@@ -42,11 +42,10 @@ public class GameServer extends Application implements ConnectInfo {
                 try {
                     // This makes it so that the game will not start until both players are connected.
                     // This is because the program will not start the other ports until the method finishes.
-                    // BRING THIS BACK WHEN DONE THE GAME!!!!!!!!!!!
-//                    givePlayersRespectivePorts();
+                    givePlayersRespectivePorts();
 
-                    // REMOVE THIS METHOD WHEN DONE THE GAME!!!!!!!!!!!!!!!!!!!!!!
-                    giveImmediatePlayer1Port();
+                    // This allows the guard to change before player 2 has connected.
+//                    giveImmediatePlayer1Port();
 
                     // Connect to the attack interface for player 1
                     ServerSocket player1ServerSocket1 = new ServerSocket(COMBAT_PORT);
@@ -64,7 +63,6 @@ public class GameServer extends Application implements ConnectInfo {
                     Socket player1SocketDefense = player1ServerSocket2.accept();
 
                     ObjectOutputStream toPlayer1Defense = new ObjectOutputStream(player1SocketDefense.getOutputStream());
-                    ObjectInputStream fromPlayer1Defense = new ObjectInputStream(player1SocketDefense.getInputStream());
 
 
                     ServerSocket player1ServerSocketInput = new ServerSocket(INPUT_PORT); // Player 1
@@ -77,8 +75,8 @@ public class GameServer extends Application implements ConnectInfo {
 
 
 
-                    // REMOVE THIS METHOD WHEN DONE THE GAME!!!!!!!!!!!!!!!!!!!!!!
-                    giveImmediatePlayer2Port();
+                    // Used in addition to giveImmediatePlayers1Port(), this lets player 1 change the guard before player 2 has connected.
+//                    giveImmediatePlayer2Port();
 
 
                     // Connect to the attack interface for player 2
@@ -98,7 +96,6 @@ public class GameServer extends Application implements ConnectInfo {
                     Socket player2SocketDefense = player2ServerSocket2.accept();
 
                     ObjectOutputStream toPlayer2Defense = new ObjectOutputStream(player2SocketDefense.getOutputStream());
-                    ObjectInputStream fromPlayer2Defense = new ObjectInputStream(player2SocketDefense.getInputStream());
 
 
                     ServerSocket player2ServerSocketInput = new ServerSocket(INPUT_PORT_2); // Player 2
@@ -115,13 +112,7 @@ public class GameServer extends Application implements ConnectInfo {
                     ServerCombat.startServerCombat(toPlayer1Combat, fromPlayer1Combat, toPlayer2Combat, fromPlayer2Combat);
 
                     // Start the server's defense
-                    ServerDefense.start(toPlayer1Defense, fromPlayer1Defense, toPlayer2Defense, fromPlayer2Defense);
-
-
-//                    player1ServerSocket1.close();
-//                    player1ServerSocket2.close();
-//                    player2ServerSocket1.close();
-//                    player2ServerSocket2.close();
+                    ServerDefense.start(toPlayer1Defense, toPlayer2Defense);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -148,10 +139,11 @@ public class GameServer extends Application implements ConnectInfo {
             // Tell the client that is it player 2
             dataOutputStream2.writeInt(2);
         } catch (IOException e) {
-
+            throw new RuntimeException();
         }
     }
 
+    @Deprecated
     private static void giveImmediatePlayer1Port() {
         try (ServerSocket serverSocket = new ServerSocket(STARTING_PORT)) {
             DataOutputStream dataOutputStream1 = new DataOutputStream(serverSocket.accept().getOutputStream());
@@ -159,10 +151,11 @@ public class GameServer extends Application implements ConnectInfo {
             // Tell the client that it is player 1
             dataOutputStream1.writeInt(1);
         } catch (IOException e) {
-
+            throw new RuntimeException();
         }
     }
 
+    @Deprecated
     private static void giveImmediatePlayer2Port() {
         try (ServerSocket serverSocket = new ServerSocket(STARTING_PORT)) {
             DataOutputStream dataOutputStream2 = new DataOutputStream(serverSocket.accept().getOutputStream());
@@ -170,7 +163,7 @@ public class GameServer extends Application implements ConnectInfo {
             // Tell the client that is it player 2
             dataOutputStream2.writeInt(2);
         } catch (IOException e) {
-
+            throw new RuntimeException();
         }
     }
 }

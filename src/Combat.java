@@ -66,16 +66,16 @@ public class Combat implements ConnectInfo{
             new Thread(() -> {
                 try {
                     // Send to the server the light attack object to handle
-                    Controller.getToServer().writeObject(character.getLightAttack());
-                    Controller.getToServer().flush();
+                    Controller.getToCombatServer().writeObject(character.getLightAttack());
+                    Controller.getToCombatServer().flush();
                     // Tell the server how much stamina I have
-                    Controller.getToServer().writeInt(character.getStamina());
-                    Controller.getToServer().flush();
+                    Controller.getToCombatServer().writeInt(character.getStamina());
+                    Controller.getToCombatServer().flush();
 
                     // The server tells my action. Did I land the attack? Was I blocked? Did I parry instead?
                     // Did I even have enough stamina to attack?
                     // The response will not be instantaneous. So, it needs to be in a thread.
-                    int typeOfAction = Controller.getFromServer().readInt();
+                    int typeOfAction = Controller.getFromCombatServer().readInt();
 
                     // Decrease stamina if attack went through.
                     if (typeOfAction == Controller.ATTACK_ACTION) {
@@ -123,16 +123,16 @@ public class Combat implements ConnectInfo{
                 try {
                     // Send to the server the heavy attack object to handle
                     // We do not know if this was a heavy or a parry. Let the server find this out.
-                    Controller.getToServer().writeObject(character.getHeavyAttack());
-                    Controller.getToServer().flush();
+                    Controller.getToCombatServer().writeObject(character.getHeavyAttack());
+                    Controller.getToCombatServer().flush();
                     // Tell the server how much stamina I have
-                    Controller.getToServer().writeInt(character.getStamina());
-                    Controller.getToServer().flush();
+                    Controller.getToCombatServer().writeInt(character.getStamina());
+                    Controller.getToCombatServer().flush();
 
                     // The server tells my action. Did I land a heavy? Was I blocked? Did I parry instead?
                     // Did I even have enough stamina to attack?
                     // The response will not be instantaneous. So, it needs to be in a thread.
-                    int typeOfAction = Controller.getFromServer().readInt();
+                    int typeOfAction = Controller.getFromCombatServer().readInt();
 
                     // Decrease stamina if attack went through.
                     if (typeOfAction == Controller.ATTACK_ACTION) {
@@ -207,18 +207,14 @@ public class Combat implements ConnectInfo{
      */
     private static void flashGuard(FXMLLoader loader) {
         Polygon activeGuard = (Polygon) loader.getNamespace().get("ACTIVE_GUARD");
-        Platform.runLater(() -> {
-            activeGuard.setFill(Color.web("#e6ff41"));
-        });
+        Platform.runLater(() -> activeGuard.setFill(Color.web("#e6ff41")));
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.err.println(e + "\nFlashing guard error");
             }
-            Platform.runLater(() -> {
-                activeGuard.setFill(Color.BLACK);
-            });
+            Platform.runLater(() -> activeGuard.setFill(Color.BLACK));
         }).start();
     }
     private static void setInputConnection() {

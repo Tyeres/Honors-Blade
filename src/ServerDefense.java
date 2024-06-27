@@ -2,7 +2,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ServerDefense {
@@ -18,8 +17,8 @@ public class ServerDefense {
     private static ObjectOutputStream toPlayer1Defense;
     private static ObjectOutputStream toPlayer2Defense;
 
-    public static void start(ObjectOutputStream toPlayer1Defense, ObjectInputStream fromPlayer1Defense,
-                             ObjectOutputStream toPlayer2Defense, ObjectInputStream fromPlayer2Defense) {
+    public static void start(ObjectOutputStream toPlayer1Defense,
+                             ObjectOutputStream toPlayer2Defense) {
 
         ServerDefense.toPlayer1Defense = toPlayer1Defense;
         ServerDefense.toPlayer2Defense = toPlayer2Defense;
