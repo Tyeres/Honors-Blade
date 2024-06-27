@@ -40,7 +40,7 @@ public class PaintApplication extends Application implements ConnectInfo {
         primaryStage.setScene(scene);
 
         // Set the stage title
-        primaryStage.setTitle("Fort Honor");
+        primaryStage.setTitle("Honor's Blade");
 
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitHint("");

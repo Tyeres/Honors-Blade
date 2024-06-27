@@ -99,6 +99,10 @@ public class Combat implements ConnectInfo{
                     else if (typeOfAction == Controller.NO_STAMINA_ACTION) {
                         playStaminaError();
                     }
+                    else if (typeOfAction == Controller.INTERRUPTED_ACTION) {
+                        // I'll have the player grunt when an attack is interrupted. So, reuse the playFeintAudio method
+                        Defense.playFeintAudio();
+                    }
                 } catch (IOException | InterruptedException err) {
                     System.err.println(err);
                 }
@@ -165,6 +169,10 @@ public class Combat implements ConnectInfo{
                     // Play error if out of stamina.
                     else if (typeOfAction == Controller.NO_STAMINA_ACTION) {
                         playStaminaError();
+                    }
+                    else if (typeOfAction == Controller.INTERRUPTED_ACTION) {
+                        // I'll have the player grunt when an attack is interrupted. So, reuse the playFeintAudio method
+                        Defense.playFeintAudio();
                     }
                 } catch (IOException | InterruptedException err) {
                     System.err.println(err);

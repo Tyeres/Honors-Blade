@@ -77,7 +77,7 @@ public class ServerDefense {
             return player1Guard.get();
         return player2Guard.get();
     }
-    public static ObjectOutputStream getOpponentDefenseToServer(int playerType) {
+    public static ObjectOutputStream getOpponentDefenseToClient(int playerType) {
         if (playerType == 2)
             return toPlayer1Defense;
         return toPlayer2Defense;

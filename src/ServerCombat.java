@@ -11,12 +11,14 @@ public class ServerCombat {
     public static final LightAttack lightAttack = new LightAttack();
     public static final HeavyAttack heavyAttack = new HeavyAttack();
 
-    static boolean parryWindow1 = false;
-    static boolean parryWindow2 = false;
-    static boolean beenParried1 = false;
-    static boolean beenParried2 = false;
-    static boolean feint1 = false;
-    static boolean feint2 = false;
+    private static boolean parryWindow1 = false;
+    private static boolean parryWindow2 = false;
+    private static boolean beenParried1 = false;
+    private static boolean beenParried2 = false;
+    private static boolean feint1 = false;
+    private static boolean feint2 = false;
+    private static boolean canDealDamage1 = true;
+    private static boolean canDealDamage2 = true;
 
 
     private ServerCombat() {
@@ -55,8 +57,8 @@ public class ServerCombat {
                         } else {
 
                             // This is so that the opponent sees the start of the attack indicator.
-                            ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.INCOMING_ATTACK);
-                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                            ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.INCOMING_ATTACK);
+                            ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                             // Wait for the attack to land go through
                             Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_CLOSED_LENGTH));
@@ -65,15 +67,15 @@ public class ServerCombat {
                             // If a right click has been used while this was open, then getBeenParried should read as true
                             setParryWindow(playerType, true);
                             // The opponent client is waiting to receive a value to know when the parry window opens.
-                            ServerDefense.getOpponentDefenseToServer(playerType).writeInt(0);
-                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                            ServerDefense.getOpponentDefenseToClient(playerType).writeInt(0);
+                            ServerDefense.getOpponentDefenseToClient(playerType).flush();
                             Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
 
                             setParryWindow(playerType, false);
 
                             // The client is waiting to receive a value to know when the attack ends. It doesn't matter what the value is.
-                            ServerDefense.getOpponentDefenseToServer(playerType).writeInt(0);
-                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                            ServerDefense.getOpponentDefenseToClient(playerType).writeInt(0);
+                            ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                             int enemyStance = returnEnemyGuard(playerType);
                             int myStance = returnPlayerGuard(playerType);
@@ -87,28 +89,45 @@ public class ServerCombat {
                                 // Reset beenParried boolean
                                 setBeenParried(playerType, false);
                                 // Tell the enemy player that he parried me
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                                 // Change the guard to no-guard so that the player can be punished.
                                 openGuardTemporarily(playerType, Controller.LIGHT_PARRY_STUN_LENGTH);
                             }
                             // Attack lands
-                            else if (enemyStance != myStance) {
+                            else if (enemyStance != myStance && isCanDealDamage(playerType)) {
                                 toOpponent1Combat.writeInt(Controller.ATTACK_ACTION);
                                 toOpponent1Combat.flush();
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ATTACK_ACTION);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
-                                // Tell the player how much damage to take. It's a light attack.
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(lightAttack.getSide());
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.ATTACK_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                                // Tell the opponent player how much damage to take. It's a light attack.
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(lightAttack.getSide());
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                                // Do not let the enemy player do any damage temporarily. NO HYPER ARMOR :)
+                                new Thread(()->{
+                                    try {
+                                        setOpponentCanDealDamage(false, playerType);
+                                        Thread.sleep(Controller.ATTACK_INTERRUPT_STUN_LENGTH);
+                                        setOpponentCanDealDamage(true, playerType);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }).start();
                             }
                             // Attack is blocked
-                            else {
+                            else if (enemyStance == myStance) {
                                 toOpponent1Combat.writeInt(Controller.BLOCKED_ACTION);
                                 toOpponent1Combat.flush();
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.BLOCKED_ACTION);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.BLOCKED_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                            }
+                            // The attack was interrupted
+                            else {
+                                toOpponent1Combat.writeInt(Controller.INTERRUPTED_ACTION);
+                                toOpponent1Combat.flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.INTERRUPTED_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
                             }
                         }
                     }
@@ -136,8 +155,8 @@ public class ServerCombat {
 
 
                             // This is so that the opponent sees the start of the attack indicator.
-                            ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.INCOMING_ATTACK);
-                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                            ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.INCOMING_ATTACK);
+                            ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                             // Wait for the attack to land go through
                             // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
@@ -151,8 +170,8 @@ public class ServerCombat {
                                 setParryWindow(playerType, true);
 
                                 // The opponent client is waiting to receive a value to know when the parry window opens.
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(0);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(0);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                                 // Parry window is open for two thirds of the attack length
                                 Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
@@ -162,13 +181,13 @@ public class ServerCombat {
                             } else {
                                 // The enemy is waiting to receive a value to know when the parry window opens.
                                 // Send FEINT_ACTION so that the enemy knows never to open it.
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.FEINT_ACTION);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.FEINT_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
                             }
 
                             // The client is waiting to receive a value to know when the attack ends. It doesn't matter what the value is.
-                            ServerDefense.getOpponentDefenseToServer(playerType).writeInt(0);
-                            ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                            ServerDefense.getOpponentDefenseToClient(playerType).writeInt(0);
+                            ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
 
                             int enemyStance = returnEnemyGuard(playerType);
@@ -190,28 +209,44 @@ public class ServerCombat {
                                 // Reset beenParried boolean
                                 setBeenParried(playerType, false);
                                 // Tell the enemy player that he parried me
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.ACTIVE_PARRY_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                                 // Change the guard to no-guard so that the player can be punished.
                                 openGuardTemporarily(playerType, Controller.HEAVY_PARRY_STUN_LENGTH);
                             }
                             // Attack lands
-                            else if (enemyStance != myStance) {
+                            else if (enemyStance != myStance && isCanDealDamage(playerType)) {
                                 toOpponent1Combat.writeInt(Controller.ATTACK_ACTION);
                                 toOpponent1Combat.flush();
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.ATTACK_ACTION);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
-                                // Tell the player how much damage to take. It's a heavy attack.
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(heavyAttack.getSide());
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.ATTACK_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                                // Tell the opponent player how much damage to take. It's a heavy attack.
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(heavyAttack.getSide());
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                                // Do not let the enemy player do any damage temporarily. NO HYPER ARMOR :)
+                                new Thread(()->{
+                                    try {
+                                        setOpponentCanDealDamage(false, playerType);
+                                        Thread.sleep(Controller.ATTACK_INTERRUPT_STUN_LENGTH);
+                                        setOpponentCanDealDamage(true, playerType);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }).start();
                             }
                             // Attack is blocked
-                            else {
+                            else if (enemyStance == myStance){
                                 toOpponent1Combat.writeInt(Controller.BLOCKED_ACTION);
                                 toOpponent1Combat.flush();
-                                ServerDefense.getOpponentDefenseToServer(playerType).writeInt(Controller.BLOCKED_ACTION);
-                                ServerDefense.getOpponentDefenseToServer(playerType).flush();
+                                ServerDefense.getOpponentDefenseToClient(playerType).writeInt(Controller.BLOCKED_ACTION);
+                                ServerDefense.getOpponentDefenseToClient(playerType).flush();
+                            }
+                            // The attack was interrupted
+                            else {
+                                toOpponent1Combat.writeInt(Controller.INTERRUPTED_ACTION);
+                                toOpponent1Combat.flush();
+                                // You do not need to the opponentDefense about it because all they know is that their attack went through
                             }
                         }
                     }
@@ -262,12 +297,7 @@ public class ServerCombat {
         } else return parryWindow1;
     }
 
-    //    public static boolean getParryWindow(int playerType) {
-//        if (playerType == 1) {
-//            return parryWindow1;
-//        }
-//        else return parryWindow2;
-//    }
+
     public static boolean getBeenParried(int playerType) {
         if (playerType == 1) {
             return beenParried1;
@@ -335,5 +365,18 @@ public class ServerCombat {
         ServerDefense.setPlayerGuard(Controller.NO_GUARD, playerType);
         // Return the original guard stance so that it isn't forgotten.
         return guardStance;
+    }
+    private static void setOpponentCanDealDamage(boolean value, int playerType) {
+        // Change the opponent's
+        if (playerType == 1) {
+            canDealDamage2 = value;
+        }
+        else canDealDamage1 = value;
+    }
+    private static boolean isCanDealDamage(int playerType) {
+        if (playerType == 1) {
+            return canDealDamage1;
+        }
+        return canDealDamage2;
     }
 }
