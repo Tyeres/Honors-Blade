@@ -1,3 +1,4 @@
+import ObjectsToSend.HealthStaminaPackage;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,6 +10,7 @@ import javafx.scene.shape.Polygon;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
@@ -17,6 +19,7 @@ public class Combat implements ConnectInfo{
     }
 
     private static ObjectOutputStream toServerInput;
+    private static ObjectInputStream fromServerInput;
     private static boolean canAttack = true;
 
     static Character character = Controller.getCharacter();
@@ -225,6 +228,9 @@ public class Combat implements ConnectInfo{
                 Thread.sleep(50);
                 Socket inputSocket = new Socket(SERVER_IP, Controller.getInputPort());
                 toServerInput = new ObjectOutputStream(inputSocket.getOutputStream());
+                // Use this to learn when the enemy player has updated his health or stamina
+                fromServerInput = new ObjectInputStream(inputSocket.getInputStream());
+                startMonitoringEnemyHealthStamina(fromServerInput);
             } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
@@ -233,5 +239,24 @@ public class Combat implements ConnectInfo{
 
     public static ObjectOutputStream getToServerInput() {
         return toServerInput;
+    }
+    // Since this.fromServerInput is in the same scope as fromServerInput, I don't need to use an argument. However, I use one any ways for readability.
+    private static void startMonitoringEnemyHealthStamina(ObjectInputStream fromServerInput) {
+         new Thread(()->{
+             while (true) {
+                 try {
+                     HealthStaminaPackage healthStaminaPackage = (HealthStaminaPackage) fromServerInput.readObject();
+                     if (healthStaminaPackage.hp() > 0) {
+                         Controller.decreaseEnemyHP(healthStaminaPackage.hp());
+                     }
+                     Controller.setEnemyStamina(healthStaminaPackage.stamina());
+
+                     System.out.println("Enemy HP: " + Controller.getEnemyCharacterHP());
+
+                 } catch (IOException | ClassNotFoundException e) {
+                     throw new RuntimeException(e);
+                 }
+             }
+         }).start();
     }
 }

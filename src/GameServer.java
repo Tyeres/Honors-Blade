@@ -44,7 +44,7 @@ public class GameServer extends Application implements ConnectInfo {
                     // This is because the program will not start the other ports until the method finishes.
                     givePlayersRespectivePorts();
 
-                    // This allows the guard to change before player 2 has connected.
+                    // This allows the client of player 1 to start before player 2 has connected
 //                    giveImmediatePlayer1Port();
 
                     // Connect to the attack interface for player 1
@@ -69,10 +69,9 @@ public class GameServer extends Application implements ConnectInfo {
 
                     Socket player1InputSocket = player1ServerSocketInput.accept();
 
-                    ObjectInputStream fromPlayer1 = new ObjectInputStream(player1InputSocket.getInputStream());
-
-                    ServerReadInput.run(fromPlayer1, 1);
-
+                    // Initiate these for later use.
+                    ObjectInputStream fromPlayer1Input = new ObjectInputStream(player1InputSocket.getInputStream());
+                    ObjectOutputStream toPlayer1Input = new ObjectOutputStream(player1InputSocket.getOutputStream());
 
 
                     // Used in addition to giveImmediatePlayers1Port(), this lets player 1 change the guard before player 2 has connected.
@@ -103,9 +102,12 @@ public class GameServer extends Application implements ConnectInfo {
                     Socket player2 = player2ServerSocketInput.accept();
 
 
-                    ObjectInputStream fromPlayer2 = new ObjectInputStream(player2.getInputStream());
+                    ObjectInputStream fromPlayer2Input = new ObjectInputStream(player2.getInputStream());
+                    ObjectOutputStream toPlayer2Input = new ObjectOutputStream(player2.getOutputStream());
 
-                    ServerReadInput.run(fromPlayer2, 2);
+                    // Start reading the input from both users.
+                    ServerReadInput.run(fromPlayer1Input, toPlayer2Input, 1);
+                    ServerReadInput.run(fromPlayer2Input, toPlayer1Input, 2);
 
 
                     // Start the server's combat

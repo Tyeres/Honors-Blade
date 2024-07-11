@@ -31,8 +31,18 @@ public class Controller {
 
 
     private static final Character character = new Character();
-    // This is used to keep track of the enemy's HP. It should initially match the HP of your player too.
+    // This is used to keep track of the enemy's HP and stamina. It should initially match the HP of your player too.
     private static int enemyCharacterHP = character.getHp();
+    private static int enemyCharacterStamina = character.getMaxStamina();
+    public static void decreaseEnemyHP(int damage) {
+        enemyCharacterHP -= damage;
+    }
+    public static void increaseEnemyStamina(int staminaIncrease) {
+        enemyCharacterStamina += staminaIncrease;
+    }
+    public static void setEnemyStamina(int stamina) {
+        enemyCharacterStamina = stamina;
+    }
 
     public final static int UP_GUARD = 10;
     public final static int LEFT_GUARD = 11;
@@ -43,8 +53,8 @@ public class Controller {
     private static ObjectOutputStream toCombatServer;
     private static ObjectInputStream fromCombatServer;
 
-    public static final int HEAVY_STAMINA_COST = 5;
-    public static final int LIGHT_STAMINA_COST = 3;
+    public static final int HEAVY_STAMINA_COST = 7;
+    public static final int LIGHT_STAMINA_COST = 5;
 
 //    public static boolean isUpPressed;
 //    public static boolean isLeftPressed;
@@ -60,6 +70,12 @@ public class Controller {
 
     public static Character getCharacter() {
         return character;
+    }
+    public static int getEnemyCharacterHP() {
+        return enemyCharacterHP;
+    }
+    public static int getEnemyCharacterStamina() {
+        return enemyCharacterStamina;
     }
 
     public static ObjectOutputStream getToCombatServer() {
@@ -102,13 +118,4 @@ public class Controller {
         Controller.inputPort = inputPort;
     }
 
-    public static int getEnemyCharacterHP() {
-        return enemyCharacterHP;
-    }
-
-    public static void decreaseEnemyCharacterHP(int damage) {
-        if (damage > 0) {
-            Controller.enemyCharacterHP -= damage;
-        }
-    }
 }

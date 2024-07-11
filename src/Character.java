@@ -1,6 +1,8 @@
+import ObjectsToSend.HealthStaminaPackage;
 import ObjectsToSend.HeavyAttack;
 import ObjectsToSend.LightAttack;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -66,16 +68,22 @@ public class Character implements Serializable {
     public void setGuardStance(int guardStance) {
         this.guardStance = guardStance;
     }
-    public synchronized void increaseStamina(int amount) {
+    public synchronized void increaseStamina(int amount) throws IOException {
         this.stamina += amount;
+        Combat.getToServerInput().writeObject(new HealthStaminaPackage(0, this.stamina));
+        Combat.getToServerInput().flush();
     }
-    public synchronized void decreaseStamina(int cost) {
+    public synchronized void decreaseStamina(int cost) throws IOException {
         this.stamina -= cost;
+        Combat.getToServerInput().writeObject(new HealthStaminaPackage(0, this.stamina));
+        Combat.getToServerInput().flush();
     }
-    public void decreaseHealth(int hp) {
-        if (hp > 0) {
-            System.out.println(hp + " decreased in health");
-            this.hp -= hp;
+    public void decreaseHealth(int damage) throws IOException {
+        if (damage > 0) {
+            System.out.println(damage + " decreased in health");
+            this.hp -= damage;
+            Combat.getToServerInput().writeObject(new HealthStaminaPackage(damage, this.stamina));
+            Combat.getToServerInput().flush();
         }
     }
 }
