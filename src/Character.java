@@ -128,5 +128,9 @@ public class Character {
                 myHPBar.setProgress(Controller.convertHPToProgressBarProgression(this.getHp()));
             });
         }
+        // If I have died
+        if (hp <= 0) {
+            PaintApplication.gameOver(false);
+        }
     }
 }

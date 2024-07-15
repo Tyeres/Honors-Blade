@@ -63,11 +63,6 @@
                         <Image url="@StanceImages/Ready.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="connectingText" alignment="CENTER" editable="false" focusTraversable="false" text="Connecting to opponent">
-                     <font>
-                        <Font size="31.0" />
-                     </font>
-                  </TextField>
                   <Polygon fx:id="ACTIVE_GUARD" rotate="180.0" stroke="#ababab" strokeType="INSIDE" strokeWidth="10.0">
                     <points>
                       <Double fx:value="-50.0" />
@@ -121,6 +116,11 @@
                         <Insets bottom="128.0" />
                      </StackPane.margin>
                   </Rectangle>
+                  <TextField fx:id="connectingText" alignment="CENTER" editable="false" focusTraversable="false" text="Connecting to opponent">
+                     <font>
+                        <Font size="31.0" />
+                     </font>
+                  </TextField>
                   <Label contentDisplay="RIGHT" focusTraversable="false" text="ENEMY HP">
                      <graphic>
                         <ProgressBar fx:id="enemyHPBar" prefHeight="18.0" prefWidth="563.0" progress="1.0" style="-fx-accent: red;">

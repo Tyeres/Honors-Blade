@@ -46,10 +46,13 @@ public class Controller {
         Platform.runLater(()->{
             enemyHPBar.setProgress(convertHPToProgressBarProgression(enemyCharacterHP));
         });
+
+        // If the enemy has died
+        if (enemyCharacterHP <= 0) {
+            PaintApplication.gameOver(true);
+        }
     }
-    public static void increaseEnemyStamina(int staminaIncrease) {
-        setEnemyStamina(enemyCharacterStamina + staminaIncrease);
-    }
+
     public static void setEnemyStamina(int stamina) {
         enemyCharacterStamina = stamina;
         // Show the change
@@ -69,18 +72,6 @@ public class Controller {
 
     public static final int HEAVY_STAMINA_COST = 7;
     public static final int LIGHT_STAMINA_COST = 5;
-
-//    public static boolean isUpPressed;
-//    public static boolean isLeftPressed;
-//    public static boolean isRightPressed;
-//    public static final String UP = "W";
-//    public static final String LEFT = "A";
-//    public static final String RIGHT = "D";
-
-
-//    public void click(ActionEvent action) {
-//
-//    }
 
     public static Character getCharacter() {
         return character;
@@ -132,10 +123,12 @@ public class Controller {
         Controller.inputPort = inputPort;
     }
 
+    // This sets the enemy's ProgressBar object, not the enemy's hp.
     public static void setEnemyHPBar(ProgressBar enemyHPBar) {
         Controller.enemyHPBar = enemyHPBar;
     }
 
+    // This sets the enemy's ProgressBar object, not the enemy's stamina.
     public static void setEnemyStaminaBar(ProgressBar enemyStaminaBar) {
         Controller.enemyStaminaBar = enemyStaminaBar;
     }
@@ -146,6 +139,11 @@ public class Controller {
     public static double convertStaminaToProgressBarProgression(int stamina) {
         return convertToProgressBarProgression(stamina, character.getMaxStamina());
     }
+
+    /**
+     * This method converts the part to a form that the ProgressBar's setProgress() method can read. 1.0 is the
+     * max progress for the bar, and 0 is an empty progress bar.
+     */
     protected static double convertToProgressBarProgression(int part, int maxWhole) {
         return ((double) part) / maxWhole;
     }
