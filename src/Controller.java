@@ -11,9 +11,9 @@ public class Controller {
     public static final LightAttack lightAttack = new LightAttack();
     public static final HeavyAttack heavyAttack = new HeavyAttack();
 
-    // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
+    // Parry window is one third of the attack length. Attack window is closed for two thirds of the time length initially.
     static final double PARRY_WINDOW_CLOSED_LENGTH = 2.0 / 3;
-    // Parry window is open for two thirds of the attack length
+    // Parry window is open for one third of the attack length
     static final double PARRY_WINDOW_OPENED_LENGTH = 1.0 / 3;
     static final int LIGHT_PARRY_STUN_LENGTH = 1400;
     static final int HEAVY_PARRY_STUN_LENGTH = 700;
