@@ -1,5 +1,7 @@
 import ObjectsToSend.HeavyAttack;
 import ObjectsToSend.LightAttack;
+import javafx.application.Platform;
+import javafx.scene.control.ProgressBar;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,9 +12,9 @@ public class Controller {
     public static final HeavyAttack heavyAttack = new HeavyAttack();
 
     // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
-    static final double PARRY_WINDOW_CLOSED_LENGTH = 1.0 / 3;
+    static final double PARRY_WINDOW_CLOSED_LENGTH = 2.0 / 3;
     // Parry window is open for two thirds of the attack length
-    static final double PARRY_WINDOW_OPENED_LENGTH = 2.0 / 3;
+    static final double PARRY_WINDOW_OPENED_LENGTH = 1.0 / 3;
     static final int LIGHT_PARRY_STUN_LENGTH = 1400;
     static final int HEAVY_PARRY_STUN_LENGTH = 700;
     static final int ATTACK_INTERRUPT_STUN_LENGTH = 500;
@@ -30,18 +32,29 @@ public class Controller {
     public static final int INTERRUPTED_ACTION = 5;
 
 
+    private static ProgressBar enemyHPBar;
+    private static ProgressBar enemyStaminaBar;
+
     private static final Character character = new Character();
     // This is used to keep track of the enemy's HP and stamina. It should initially match the HP of your player too.
     private static int enemyCharacterHP = character.getHp();
     private static int enemyCharacterStamina = character.getMaxStamina();
     public static void decreaseEnemyHP(int damage) {
         enemyCharacterHP -= damage;
+        // Show the change
+        Platform.runLater(()->{
+            enemyHPBar.setProgress(convertHPToProgressBarProgression(enemyCharacterHP));
+        });
     }
     public static void increaseEnemyStamina(int staminaIncrease) {
-        enemyCharacterStamina += staminaIncrease;
+        setEnemyStamina(enemyCharacterStamina + staminaIncrease);
     }
     public static void setEnemyStamina(int stamina) {
         enemyCharacterStamina = stamina;
+        // Show the change
+        Platform.runLater(()->{
+            enemyStaminaBar.setProgress(convertStaminaToProgressBarProgression(enemyCharacterStamina));
+        });
     }
 
     public final static int UP_GUARD = 10;
@@ -118,4 +131,21 @@ public class Controller {
         Controller.inputPort = inputPort;
     }
 
+    public static void setEnemyHPBar(ProgressBar enemyHPBar) {
+        Controller.enemyHPBar = enemyHPBar;
+    }
+
+    public static void setEnemyStaminaBar(ProgressBar enemyStaminaBar) {
+        Controller.enemyStaminaBar = enemyStaminaBar;
+    }
+
+    public static double convertHPToProgressBarProgression(int hp) {
+        return convertToProgressBarProgression(hp, character.getMaxHP());
+    }
+    public static double convertStaminaToProgressBarProgression(int stamina) {
+        return convertToProgressBarProgression(stamina, character.getMaxStamina());
+    }
+    protected static double convertToProgressBarProgression(int part, int maxWhole) {
+        return ((double) part) / maxWhole;
+    }
 }

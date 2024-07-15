@@ -34,7 +34,10 @@
 
 <?import java.lang.Double?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -118,6 +121,66 @@
                         <Insets bottom="128.0" />
                      </StackPane.margin>
                   </Rectangle>
+                  <Label contentDisplay="RIGHT" focusTraversable="false" text="ENEMY HP">
+                     <graphic>
+                        <ProgressBar fx:id="enemyHPBar" prefHeight="18.0" prefWidth="563.0" progress="1.0" style="-fx-accent: red;">
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </ProgressBar>
+                     </graphic>
+                     <StackPane.margin>
+                        <Insets bottom="755.0" />
+                     </StackPane.margin>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="RIGHT" focusTraversable="false" text="ENEMY STAMINA">
+                     <graphic>
+                        <ProgressBar fx:id="enemyStaminaBar" prefHeight="18.0" prefWidth="505.0" progress="1.0" style="-fx-accent: green;">
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </ProgressBar>
+                     </graphic>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <StackPane.margin>
+                        <Insets bottom="685.0" right="110.0" />
+                     </StackPane.margin>
+                  </Label>
+                  <Label contentDisplay="RIGHT" focusTraversable="false" text="MY HP">
+                     <graphic>
+                        <ProgressBar fx:id="myHPBar" prefHeight="18.0" prefWidth="563.0" progress="1.0">
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </ProgressBar>
+                     </graphic>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <StackPane.margin>
+                        <Insets top="700.0" />
+                     </StackPane.margin>
+                  </Label>
+                  <Label contentDisplay="RIGHT" focusTraversable="false" text="MY STAMINA">
+                     <graphic>
+                        <ProgressBar fx:id="myStaminaBar" prefHeight="18.0" prefWidth="505.0" progress="1.0" style="-fx-accent: green;">
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </ProgressBar>
+                     </graphic>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <StackPane.margin>
+                        <Insets right="110.0" top="770.0" />
+                     </StackPane.margin>
+                  </Label>
                </children>
             </StackPane>
          </center>

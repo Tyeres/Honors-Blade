@@ -3,6 +3,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -95,10 +96,21 @@ public class PaintApplication extends Application implements ConnectInfo {
                     }
                 } // Connecting to server loop ends here.
 
-                // Start the controls for attacks after connection to server
-                Combat.start(this.loader, scene);
+                // Start the game for the client after connection to server
+                startGame(loader);
             }).start();
 
+    }
+    private void startGame(FXMLLoader loader) {
+        Combat.setInputConnection();
+        // Starts the guard system for switching guard
+        GuardSystem.startControls(loader, scene);
+        // Starts the guard system for the opponent and starts showing attack indicators
+        Defense.startDefense(loader);
+        StaminaRegeneration.start();
+        Combat.start(this.loader, scene);
+
+        initiateHealthAndStaminaBars(loader);
     }
     private void clearConnectingText() {
         Platform.runLater(()-> {
@@ -125,5 +137,11 @@ public class PaintApplication extends Application implements ConnectInfo {
             Thread.sleep(50);
         }
         socket.close();
+    }
+    private static void initiateHealthAndStaminaBars(FXMLLoader loader) {
+        Controller.setEnemyHPBar((ProgressBar) loader.getNamespace().get("enemyHPBar"));
+        Controller.setEnemyStaminaBar((ProgressBar) loader.getNamespace().get("enemyStaminaBar"));
+        Controller.getCharacter().setMyHPBar((ProgressBar) loader.getNamespace().get("myHPBar"));
+        Controller.getCharacter().setMyStaminaBar((ProgressBar) loader.getNamespace().get("myStaminaBar"));
     }
 }

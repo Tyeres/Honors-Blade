@@ -25,13 +25,6 @@ public class Combat implements ConnectInfo{
     static Character character = Controller.getCharacter();
 
     public static void start(FXMLLoader loader, Scene scene) {
-        setInputConnection();
-        // Starts the guard system for switching guard
-        GuardSystem.startControls(loader, scene);
-        // Starts the guard system for the opponent and starts showing attack indicators
-        Defense.startDefense(loader);
-        StaminaRegeneration.start();
-
 
         // Starts the mouse buttons
         scene.setOnMouseClicked(event -> {
@@ -220,13 +213,14 @@ public class Combat implements ConnectInfo{
             Platform.runLater(() -> activeGuard.setFill(Color.BLACK));
         }).start();
     }
-    private static void setInputConnection() {
+    public static void setInputConnection() {
         new Thread(() -> {
             try {
                 // The Defense port was connected right beforehand;
                 // give time for the server to start up its server for the input.
                 Thread.sleep(50);
                 Socket inputSocket = new Socket(SERVER_IP, Controller.getInputPort());
+                // Send the server inputs.
                 toServerInput = new ObjectOutputStream(inputSocket.getOutputStream());
                 // Use this to learn when the enemy player has updated his health or stamina
                 fromServerInput = new ObjectInputStream(inputSocket.getInputStream());
@@ -241,6 +235,8 @@ public class Combat implements ConnectInfo{
         return toServerInput;
     }
     // Since this.fromServerInput is in the same scope as fromServerInput, I don't need to use an argument. However, I use one any ways for readability.
+
+    // This method watches for when the enemy manually updates his stamina. When this is used, the true stamina of the enemy will display.
     private static void startMonitoringEnemyHealthStamina(ObjectInputStream fromServerInput) {
          new Thread(()->{
              while (true) {
@@ -250,8 +246,6 @@ public class Combat implements ConnectInfo{
                          Controller.decreaseEnemyHP(healthStaminaPackage.hp());
                      }
                      Controller.setEnemyStamina(healthStaminaPackage.stamina());
-
-                     System.out.println("Enemy HP: " + Controller.getEnemyCharacterHP());
 
                  } catch (IOException | ClassNotFoundException e) {
                      throw new RuntimeException(e);
