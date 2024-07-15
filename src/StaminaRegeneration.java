@@ -19,20 +19,6 @@ public class StaminaRegeneration {
                         // The stamina regeneration amount will go over the max stamina amount. So, just max it now.
                         Controller.getCharacter().setStamina(Controller.getCharacter().getMaxStamina());
                     }
-
-                    // (This is a record of the enemy client's stamina to display for the player
-                    // and isn't the true enemy's stamina, but it is an estimation of the enemy's regenerating stamina).
-
-                    if (Controller.getEnemyCharacterStamina() +
-                    STAMINA_REGENERATION_AMOUNT <= Controller.getCharacter().getMaxStamina()) {
-                        Controller.increaseEnemyStamina(STAMINA_REGENERATION_AMOUNT);
-                    }
-                    else if (Controller.getEnemyCharacterStamina() +
-                    STAMINA_REGENERATION_AMOUNT != Controller.getCharacter().getMaxStamina() + STAMINA_REGENERATION_AMOUNT) {
-                        Controller.setEnemyStamina(Controller.getCharacter().getMaxStamina());
-                        System.out.println("Enemy Stamina: "+ Controller.getCharacter().getStamina());
-                    }
-
                     Thread.sleep(2200);
                 } catch (InterruptedException | IOException e) {
                     throw new RuntimeException(e);

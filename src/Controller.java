@@ -18,6 +18,7 @@ public class Controller {
     static final int LIGHT_PARRY_STUN_LENGTH = 1400;
     static final int HEAVY_PARRY_STUN_LENGTH = 700;
     static final int ATTACK_INTERRUPT_STUN_LENGTH = 500;
+    public static final int FEINT_COST = 5;
 
     private static int combatPort;
     private static int defensePort;

@@ -150,9 +150,9 @@ public class Combat implements ConnectInfo{
                     }
                     else if (typeOfAction == Controller.FEINT_ACTION) {
                         // Decrease stamina
-                        if (character.getStamina() - 3 < 0)
+                        if (character.getStamina() - Controller.FEINT_COST < 0)
                             character.setStamina(0);
-                        else character.decreaseStamina(3);
+                        else character.decreaseStamina(Controller.FEINT_COST);
 
                         Defense.playFeintAudio();
                     }

@@ -58,8 +58,18 @@ public class Character {
         return lightAttack;
     }
 
-    public void setHp(int hp) {
+    /**
+     *
+     * @param hp
+     * This method should not be used and would not work if used. This is because the
+     * startMonitoringEnemyHealthStamina() method within Combat.java (which receives the written object) uses hp points to DECREASE the health,
+     * not to SET the health. This could easily be fixed, but I currently have no use for this method any ways.
+     */
+    @Deprecated
+    public void setHp(int hp) throws IOException {
         this.hp = hp;
+        Combat.getToServerInput().writeObject(new HealthStaminaPackage(hp, this.stamina));
+        Combat.getToServerInput().flush();
         // Show the change
         Platform.runLater(()->{
             myHPBar.setProgress(Controller.convertHPToProgressBarProgression(this.getHp()));
@@ -74,8 +84,10 @@ public class Character {
         return this.stamina;
     }
 
-    public void setStamina(int stamina) {
+    public void setStamina(int stamina) throws IOException {
         this.stamina = stamina;
+        Combat.getToServerInput().writeObject(new HealthStaminaPackage(0, this.stamina));
+        Combat.getToServerInput().flush();
         // Show the change
         Platform.runLater(()->{
             myStaminaBar.setProgress(Controller.convertStaminaToProgressBarProgression(this.getStamina()));
@@ -90,20 +102,31 @@ public class Character {
         this.guardStance = guardStance;
     }
     public synchronized void increaseStamina(int amount) throws IOException {
-        setStamina(this.stamina + amount);
+        this.stamina += amount;
         Combat.getToServerInput().writeObject(new HealthStaminaPackage(0, this.stamina));
         Combat.getToServerInput().flush();
+        // Show the change
+        Platform.runLater(()->{
+            myStaminaBar.setProgress(Controller.convertStaminaToProgressBarProgression(this.getStamina()));
+        });
     }
     public synchronized void decreaseStamina(int cost) throws IOException {
-        setStamina(this.stamina - cost);
+        this.stamina -= cost;
         Combat.getToServerInput().writeObject(new HealthStaminaPackage(0, this.stamina));
         Combat.getToServerInput().flush();
+        // Show the change
+        Platform.runLater(()->{
+            myStaminaBar.setProgress(Controller.convertStaminaToProgressBarProgression(this.getStamina()));
+        });
     }
     public void decreaseHealth(int damage) throws IOException {
         if (damage > 0) {
-            setHp(this.hp - damage);
+            this.hp -= damage;
             Combat.getToServerInput().writeObject(new HealthStaminaPackage(damage, this.stamina));
             Combat.getToServerInput().flush();
+            Platform.runLater(()->{
+                myHPBar.setProgress(Controller.convertHPToProgressBarProgression(this.getHp()));
+            });
         }
     }
 }
