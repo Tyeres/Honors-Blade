@@ -1,0 +1,7 @@
+Future Update Ideas:
+
+Have a stamina system more like For Honor's. You can use any attack even if you have only 1 stamina point left. However, when the player goes into 0 or negative stamina, the player cannot attack until the stamina fully regenerates. This would be pretty easy to implement.
+
+Have chain attacks. As the player attacks more and more, the attacks get faster and faster until they max out at three. After the chain ends, the attacks go back to normal speed.
+
+A version of the game where the player can play the game locally on the network. The player could host a lobby or join one.
