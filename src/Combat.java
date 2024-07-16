@@ -104,8 +104,10 @@ public class Combat implements ConnectInfo{
                 }
                 // Attack over.
                 endAttackFX();
-                canAttack = true;
-                GuardSystem.setCanChangeGuard(true);
+                if (PaintApplication.isGameInProgress()) {
+                    canAttack = true;
+                    GuardSystem.setCanChangeGuard(true);
+                }
             }).start();
         }
     }
@@ -175,8 +177,10 @@ public class Combat implements ConnectInfo{
                 }
                 // Attack over.
                 endAttackFX();
-                canAttack = true;
-                GuardSystem.setCanChangeGuard(true);
+                if (PaintApplication.isGameInProgress()) {
+                    canAttack = true;
+                    GuardSystem.setCanChangeGuard(true);
+                }
             }).start();
         }
     }
@@ -218,7 +222,7 @@ public class Combat implements ConnectInfo{
             try {
                 // The Defense port was connected right beforehand;
                 // give time for the server to start up its server for the input.
-                Thread.sleep(50);
+                Thread.sleep(10);
                 Socket inputSocket = new Socket(SERVER_IP, Controller.getInputPort());
                 // Send the server inputs.
                 toServerInput = new ObjectOutputStream(inputSocket.getOutputStream());
@@ -236,13 +240,20 @@ public class Combat implements ConnectInfo{
     }
     // Since this.fromServerInput is in the same scope as fromServerInput, I don't need to use an argument. However, I use one any ways for readability.
 
-    // This method watches for when the enemy manually updates his stamina. When this is used, the true stamina of the enemy will display.
+
+    public static void setCanAttack(boolean canAttack) {
+        Combat.canAttack = canAttack;
+    }
+
+    // This method watches for when the enemy manually updates his stamina or health.
     private static void startMonitoringEnemyHealthStamina(ObjectInputStream fromServerInput) {
          new Thread(()->{
              while (true) {
                  try {
                      HealthStaminaPackage healthStaminaPackage = (HealthStaminaPackage) fromServerInput.readObject();
-                     if (healthStaminaPackage.hp() > 0) {
+                     if (healthStaminaPackage.hp() == Integer.MAX_VALUE)
+                         Controller.setEnemyCharacterHP(character.getMaxHP());
+                     else if (healthStaminaPackage.hp() > 0) {
                          Controller.decreaseEnemyHP(healthStaminaPackage.hp());
                      }
                      Controller.setEnemyStamina(healthStaminaPackage.stamina());

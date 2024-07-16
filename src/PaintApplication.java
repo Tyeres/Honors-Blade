@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -18,17 +19,18 @@ import java.net.Socket;
 public class PaintApplication extends Application implements ConnectInfo {
 
     private final FXMLLoader loader = new FXMLLoader(getClass().getResource("Game Window.fxml"));
-    private StackPane stackPane;
     // Scene of the program
     static Scene scene;
     private static TextField announcementText;
+
+    private static boolean gameInProgress = true;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         // Load the FXML file
 
         Parent root = loader.load();
-        stackPane = (StackPane) loader.getNamespace().get("stackPane");
+        StackPane stackPane = (StackPane) loader.getNamespace().get("stackPane");
 
         ImageView imageView = (ImageView) loader.getNamespace().get("background");
         // Assuming 'root' is the Node that reflects the window's size
@@ -50,11 +52,11 @@ public class PaintApplication extends Application implements ConnectInfo {
 
         // Show the stage
         primaryStage.show();
-//        scene.setOnKeyPressed(e -> {
-//            if (e.getCode() == KeyCode.ESCAPE) {
-//                System.exit(0);
-//            }
-//        });
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                System.exit(0);
+            }
+        });
         connectGame();
         primaryStage.setOnCloseRequest(e -> {
             System.exit(0);
@@ -77,7 +79,7 @@ public class PaintApplication extends Application implements ConnectInfo {
                         i++;
                     }
                     // Give the server time to create the new ports, and also make sure that the program is not trying to connect too fast.
-                    Thread.sleep(50);
+                    Thread.sleep(5);
 
                     // DO NOT CLOSE THIS SOCKET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     Socket socket = new Socket(SERVER_IP, Controller.getCombatPort());
@@ -85,14 +87,12 @@ public class PaintApplication extends Application implements ConnectInfo {
                     // To reach here, we must have connected. Set isConnected to true so that the loop ends.
                     isConnected = true;
 
-                    // Clear the "Connecting to opponent" text when connected
-                    clearConnectingText();
 
                     Controller.setFromCombatServer(new ObjectInputStream(socket.getInputStream()));
                     Controller.setToCombatServer(new ObjectOutputStream(socket.getOutputStream()));
 
                     // Give the server time to create the next server port
-                    Thread.sleep(50);
+                    Thread.sleep(5);
 
                 } catch (Exception e) {
                     // Do nothing. isConnected stays set to false. It keeps trying to connect to server.
@@ -113,16 +113,31 @@ public class PaintApplication extends Application implements ConnectInfo {
         Defense.startDefense(loader);
         StaminaRegeneration.start();
         Combat.start(this.loader, scene);
-
         initiateHealthAndStaminaBars(loader);
+
+        announcementText = ((javafx.scene.control.TextField) loader.getNamespace().get("announcementText"));
+        Combat.setCanAttack(false);
+        GuardSystem.setCanChangeGuard(false);
+        for (int i = 5; i >= 0; i--) {
+            int finalI = i;
+            Platform.runLater(()->{
+                if (finalI != 0)
+                    announcementText.setText("Game starts in " + finalI + "!");
+                else announcementText.setText("FIGHT!");
+            });
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Combat.setCanAttack(true);
+        GuardSystem.setCanChangeGuard(true);
+        announcementText.setVisible(false);
     }
 
-    private void clearConnectingText() {
-        Platform.runLater(() -> {
-            // Clear the "Connecting to opponent" text when connected
-            announcementText = ((javafx.scene.control.TextField) loader.getNamespace().get("connectingText"));
-            announcementText.setVisible(false);
-        });
+    public static TextField getAnnouncementText() {
+        return announcementText;
     }
 
     private static void setPorts() throws IOException, InterruptedException {
@@ -140,7 +155,7 @@ public class PaintApplication extends Application implements ConnectInfo {
             Controller.setDefensePort(DEFENSE_PORT_2);
             Controller.setInputPort(INPUT_PORT_2);
             // Give the server time to connect to player 1 and then to get ready for the player 2 connection
-            Thread.sleep(50);
+            Thread.sleep(7);
         }
         socket.close();
     }
@@ -153,6 +168,11 @@ public class PaintApplication extends Application implements ConnectInfo {
     }
 
     public static void gameOver(boolean gameWon) {
+        // Player cannot do anything while the game is over.
+        gameInProgress = false; // This allows it so that the canAttack & the canChangeGuard is not set to true if an attack was active before the game ended and then ended while the game was over.
+        Combat.setCanAttack(false);
+        GuardSystem.setCanChangeGuard(false);
+
         new Thread(() -> {
             Platform.runLater(() -> {
                 announcementText.setVisible(true);
@@ -173,6 +193,24 @@ public class PaintApplication extends Application implements ConnectInfo {
                     throw new RuntimeException(e);
                 }
             }
+            try {
+                // Fill the health and stamina. I don't need to fill the enemy's manually because when he does it, we will update it then.
+                Controller.getCharacter().fillHpAndStamina();
+                gameInProgress = true;
+                Combat.setCanAttack(true);
+                GuardSystem.setCanChangeGuard(true);
+                announcementText.setVisible(false);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
+    }
+
+    public static boolean isGameInProgress() {
+        return gameInProgress;
+    }
+
+    public static void setGameInProgress(boolean gameInProgress) {
+        PaintApplication.gameInProgress = gameInProgress;
     }
 }

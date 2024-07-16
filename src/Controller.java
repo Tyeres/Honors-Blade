@@ -41,16 +41,7 @@ public class Controller {
     private static int enemyCharacterHP = character.getHp();
     private static int enemyCharacterStamina = character.getMaxStamina();
     public static void decreaseEnemyHP(int damage) {
-        enemyCharacterHP -= damage;
-        // Show the change
-        Platform.runLater(()->{
-            enemyHPBar.setProgress(convertHPToProgressBarProgression(enemyCharacterHP));
-        });
-
-        // If the enemy has died
-        if (enemyCharacterHP <= 0) {
-            PaintApplication.gameOver(true);
-        }
+        setEnemyCharacterHP(enemyCharacterHP - damage);
     }
 
     public static void setEnemyStamina(int stamina) {
@@ -75,6 +66,19 @@ public class Controller {
 
     public static Character getCharacter() {
         return character;
+    }
+    public static void setEnemyCharacterHP(int hp) {
+        enemyCharacterHP = hp;
+
+        // Show the change
+        Platform.runLater(()->{
+            enemyHPBar.setProgress(convertHPToProgressBarProgression(enemyCharacterHP));
+        });
+
+        // If the enemy has died
+        if (enemyCharacterHP <= 0) {
+            PaintApplication.gameOver(true);
+        }
     }
     public static int getEnemyCharacterHP() {
         return enemyCharacterHP;

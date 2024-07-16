@@ -75,6 +75,18 @@ public class Character {
             myHPBar.setProgress(Controller.convertHPToProgressBarProgression(this.getHp()));
         });
     }
+    public void fillHpAndStamina() throws IOException {
+        this.setStamina(getMaxStamina());
+        this.hp = maxHP;
+        // Send Integer.MAX_VALUE because the startMonitoringEnemyHealthStamina() method within Combat.java will max
+        // the health when it sees that.
+        Combat.getToServerInput().writeObject(new HealthStaminaPackage(Integer.MAX_VALUE, this.stamina));
+        Combat.getToServerInput().flush();
+        // Show the change
+        Platform.runLater(()->{
+            myHPBar.setProgress(Controller.convertHPToProgressBarProgression(this.getHp()));
+        });
+    }
 
     public int getMaxStamina() {
         return maxStamina;

@@ -116,7 +116,7 @@
                         <Insets bottom="128.0" />
                      </StackPane.margin>
                   </Rectangle>
-                  <TextField fx:id="connectingText" alignment="CENTER" editable="false" focusTraversable="false" text="Connecting to opponent">
+                  <TextField fx:id="announcementText" alignment="CENTER" editable="false" focusTraversable="false" text="Connecting to opponent">
                      <font>
                         <Font size="31.0" />
                      </font>

@@ -110,7 +110,19 @@ public class Defense implements ConnectInfo {
                     }
                 }
             } catch (IOException ioException) {
-                throw new RuntimeException();
+                PaintApplication.getAnnouncementText().setText("Connection lost. Opponent likely disconnected.");
+                PaintApplication.getAnnouncementText().setVisible(true);
+                PaintApplication.setGameInProgress(false); // This allows it so that the canAttack & the canChangeGuard is not set to true if an attack was active before the game ended and then ended while the game was over.
+                Combat.setCanAttack(false);
+                GuardSystem.setCanChangeGuard(false);
+                new Thread(()->{
+                    try {
+                        Thread.sleep(6000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.exit(-5);
+                }).start();
             }
         }).start();
     }
