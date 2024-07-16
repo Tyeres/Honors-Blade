@@ -1,1 +1,0 @@
-For the attack system, you can't attack if a Boolean value is set to false. After a specified amount of time, a thread will turn it back to true. For feinting, to "interrupt" this, when you feint, the Boolean value is immediately set back to true.
