@@ -18,7 +18,7 @@ import java.net.Socket;
 
 public class PaintApplication extends Application implements ConnectInfo {
 
-    private final FXMLLoader loader = new FXMLLoader(getClass().getResource("Game Window.fxml"));
+    private static final FXMLLoader loader = new FXMLLoader(PaintApplication.class.getResource("Game Window.fxml"));
     // Scene of the program
     static Scene scene;
     private static TextField announcementText;
@@ -28,10 +28,8 @@ public class PaintApplication extends Application implements ConnectInfo {
     @Override
     public void start(Stage primaryStage) throws IOException {
         // Load the FXML file
-
         Parent root = loader.load();
         StackPane stackPane = (StackPane) loader.getNamespace().get("stackPane");
-
         ImageView imageView = (ImageView) loader.getNamespace().get("background");
         // Assuming 'root' is the Node that reflects the window's size
         imageView.fitWidthProperty().bind(stackPane.widthProperty());
@@ -100,24 +98,29 @@ public class PaintApplication extends Application implements ConnectInfo {
             } // Connecting to server loop ends here.
 
             // Start the game for the client after connection to server
-            startGame(loader);
+            startGame();
         }).start();
 
     }
 
-    private void startGame(FXMLLoader loader) {
+    private void startGame() {
         Combat.setInputConnection();
         // Starts the guard system for switching guard
         GuardSystem.startControls(loader, scene);
         // Starts the guard system for the opponent and starts showing attack indicators
         Defense.startDefense(loader);
         StaminaRegeneration.start();
-        Combat.start(this.loader, scene);
-        initiateHealthAndStaminaBars(loader);
+        Combat.start(loader, scene);
+        initiateHealthAndStaminaBars();
+
+        try {
+            // Wait until the server gives permission to start. This makes sure the countdown is in sync.
+            Controller.getFromCombatServer().readInt();
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
 
         announcementText = ((javafx.scene.control.TextField) loader.getNamespace().get("announcementText"));
-        Combat.setCanAttack(false);
-        GuardSystem.setCanChangeGuard(false);
         for (int i = 5; i >= 0; i--) {
             int finalI = i;
             Platform.runLater(()->{
@@ -160,7 +163,7 @@ public class PaintApplication extends Application implements ConnectInfo {
         socket.close();
     }
 
-    private static void initiateHealthAndStaminaBars(FXMLLoader loader) {
+    private static void initiateHealthAndStaminaBars() {
         Controller.setEnemyHPBar((ProgressBar) loader.getNamespace().get("enemyHPBar"));
         Controller.setEnemyStaminaBar((ProgressBar) loader.getNamespace().get("enemyStaminaBar"));
         Controller.getCharacter().setMyHPBar((ProgressBar) loader.getNamespace().get("myHPBar"));

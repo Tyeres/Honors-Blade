@@ -11,7 +11,7 @@ import java.io.IOException;
 public class GuardSystem {
     static byte i = 1;
 
-    static private boolean canChangeGuard = true;
+    static private boolean canChangeGuard = false; // This should initiate as false because it should first be set to true when the fight starts.
     static private double lastMouseX;
     static private double lastMouseY;
     static private final double moveThreshold = 10; // Minimum distance to trigger guard change

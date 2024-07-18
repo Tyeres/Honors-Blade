@@ -20,7 +20,7 @@ public class Combat implements ConnectInfo{
 
     private static ObjectOutputStream toServerInput;
     private static ObjectInputStream fromServerInput;
-    private static boolean canAttack = true;
+    private static boolean canAttack = false; // This should initiate as false because it should first be set to true when the fight starts.
 
     static Character character = Controller.getCharacter();
 

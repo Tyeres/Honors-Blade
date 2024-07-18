@@ -115,6 +115,12 @@ public class GameServer extends Application implements ConnectInfo {
 
                     // Start the server's defense
                     ServerDefense.start(toPlayer1Defense, toPlayer2Defense);
+
+                    // Tell the users that it's time to start the countdown to fight. We will use the combat port to do this.
+                    toPlayer1Combat.writeInt(0);
+                    toPlayer1Combat.flush();
+                    toPlayer2Combat.writeInt(0);
+                    toPlayer2Combat.flush();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
