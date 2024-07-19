@@ -12,4 +12,6 @@ public interface ConnectInfo {
     int COMBAT_PORT_2 = 8003;
     int DEFENSE_PORT_2 = 8004;
     int INPUT_PORT_2 = 8006;
+
+    String AUDIO_FILEPATH = System.getProperty("user.home") + "\\Desktop\\Honors Blade\\Audio\\";
 }

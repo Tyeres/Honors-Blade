@@ -152,19 +152,15 @@ public class Defense implements ConnectInfo {
         mediaPlayer.play();
     }
     public static void playHitAudio() {
-        playAudio("./src/Audio/hit.mp3");
-        System.out.println("Hit Audio Played");
+        playAudio(AUDIO_FILEPATH+"hit.mp3");
     }
     public static void playBlockedAudio() {
-        playAudio("./src/Audio/block.mp3");
-        System.out.println("Blocked Audio Played");
+        playAudio(AUDIO_FILEPATH+"block.mp3");
     }
     public static void playParryAudio() {
-        playAudio("./src/Audio/parry.mp3");
-        System.out.println("Parry Audio Played");
+        playAudio(AUDIO_FILEPATH+"parry.mp3");
     }
     public static void playFeintAudio() {
-        playAudio("./src/Audio/feint sound.mp3");
-        System.out.println("Feint Audio Played");
+        playAudio(AUDIO_FILEPATH+"feint sound.mp3");
     }
 }

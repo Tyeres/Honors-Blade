@@ -190,7 +190,7 @@ public class Combat implements ConnectInfo{
     }
 
     static void playStaminaError() {
-        final String NO_STAMINA_DIRECTORY = "./src/Audio/notification-sound-error-sound-effect-203788.mp3";
+        final String NO_STAMINA_DIRECTORY = AUDIO_FILEPATH+"out of stamina.mp3";
         Media media = new Media(new File(NO_STAMINA_DIRECTORY).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         mediaPlayer.play();
