@@ -2,6 +2,7 @@ import ObjectsToSend.HealthStaminaPackage;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -46,6 +47,9 @@ public class Combat implements ConnectInfo{
                 } catch (IOException exception) {
                     System.err.println(exception);
                 }
+            }
+            else if (event.getCode() == KeyCode.ESCAPE) {
+                System.exit(0);
             }
         });
     }
