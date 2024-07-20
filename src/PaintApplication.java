@@ -5,8 +5,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Objects;
 
 public class PaintApplication extends Application implements ConnectInfo {
 
@@ -27,6 +28,7 @@ public class PaintApplication extends Application implements ConnectInfo {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        primaryStage.getIcons().add(new Image(Objects.requireNonNull(PaintApplication.class.getResource("Images/Game Logo.png")).toString()));
         // Load the FXML file
         Parent root = loader.load();
         StackPane stackPane = (StackPane) loader.getNamespace().get("stackPane");
@@ -50,11 +52,11 @@ public class PaintApplication extends Application implements ConnectInfo {
 
         // Show the stage
         primaryStage.show();
-        scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ESCAPE) {
-                System.exit(0);
-            }
-        });
+//        scene.setOnKeyPressed(e -> {
+//            if (e.getCode() == KeyCode.ESCAPE) {
+//                System.exit(0);
+//            }
+//        });
         connectGame();
         primaryStage.setOnCloseRequest(e -> {
             System.exit(0);

@@ -1,12 +1,9 @@
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -82,19 +79,17 @@ public class Defense implements ConnectInfo {
                             // READING FROM SERVER
                             character.decreaseHealth(fromServer.readInt());
                             // Play audio
-                            playHitAudio();
+                            GameAudio.playHitAudio();
                         }
                         else if (typeOfAttack == Controller.BLOCKED_ACTION) {
-                            playBlockedAudio();
+                            GameAudio.playBlockAudio();
                             // Read for chip damage. If the attack is a light attack, the chip damage is 0.
                             character.decreaseHealth(fromServer.readInt());
                         }
                         else if (typeOfAttack == Controller.FEINT_ACTION) {
-                            playFeintAudio();
+                            GameAudio.playFeintAudio();
                         }
-                        // It's an active parry action. You parried your opponent.
-                        else {
-                        }
+                        // else if... It's an active parry action. You parried your opponent.
                     }
                     // Up guard
                     else if (enemyAction == Controller.UP_GUARD) {
@@ -145,22 +140,5 @@ public class Defense implements ConnectInfo {
 
     protected static void setUpEnemyGuard(FXMLLoader loader) {
         setEnemyGuard(loader, "ENEMY_UP_GUARD");
-    }
-    private static void playAudio(String directory) {
-        Media media = new Media(new File(directory).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
-    }
-    public static void playHitAudio() {
-        playAudio(AUDIO_FILEPATH+"hit.mp3");
-    }
-    public static void playBlockedAudio() {
-        playAudio(AUDIO_FILEPATH+"block.mp3");
-    }
-    public static void playParryAudio() {
-        playAudio(AUDIO_FILEPATH+"parry.mp3");
-    }
-    public static void playFeintAudio() {
-        playAudio(AUDIO_FILEPATH+"feint sound.mp3");
     }
 }

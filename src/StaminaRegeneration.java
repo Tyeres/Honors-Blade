@@ -1,7 +1,7 @@
 import java.io.IOException;
 
 public class StaminaRegeneration {
-    private final static int STAMINA_REGENERATION_AMOUNT = 3;
+    private final static int STAMINA_REGENERATION_AMOUNT = 4;
 
     public static void start() {
         new Thread(() -> {
