@@ -7,6 +7,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -52,11 +53,11 @@ public class PaintApplication extends Application implements ConnectInfo {
 
         // Show the stage
         primaryStage.show();
-//        scene.setOnKeyPressed(e -> {
-//            if (e.getCode() == KeyCode.ESCAPE) {
-//                System.exit(0);
-//            }
-//        });
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                System.exit(0);
+            }
+        });
         connectGame();
         primaryStage.setOnCloseRequest(e -> {
             System.exit(0);
