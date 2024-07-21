@@ -12,7 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Combat implements ConnectInfo{
+public class Combat implements ConnectInfo {
     private Combat() {
     }
 
@@ -79,8 +79,7 @@ public class Combat implements ConnectInfo{
                         GameAudio.playHitAudio();
                         // Decrease the stamina of the player
                         character.decreaseStamina(Controller.LIGHT_STAMINA_COST);
-                    }
-                    else if (typeOfAction == Controller.BLOCKED_ACTION) {
+                    } else if (typeOfAction == Controller.BLOCKED_ACTION) {
                         GameAudio.playBlockAudio();
                         // Decrease the stamina of the player
                         character.decreaseStamina(Controller.LIGHT_STAMINA_COST);
@@ -95,8 +94,7 @@ public class Combat implements ConnectInfo{
                     // Play error if out of stamina.
                     else if (typeOfAction == Controller.NO_STAMINA_ACTION) {
                         GameAudio.playNoStaminaAudio();
-                    }
-                    else if (typeOfAction == Controller.INTERRUPTED_ACTION) {
+                    } else if (typeOfAction == Controller.INTERRUPTED_ACTION) {
                         // I'll have the player grunt when an attack is interrupted. So, reuse the playFeintAudio method
                         GameAudio.playFeintAudio();
                     }
@@ -138,8 +136,7 @@ public class Combat implements ConnectInfo{
                         // Decrease the stamina of the player
                         character.decreaseStamina(Controller.HEAVY_STAMINA_COST);
                         GameAudio.playHitAudio();
-                    }
-                    else if (typeOfAction == Controller.BLOCKED_ACTION) {
+                    } else if (typeOfAction == Controller.BLOCKED_ACTION) {
                         // Decrease the stamina of the player
                         character.decreaseStamina(Controller.HEAVY_STAMINA_COST);
                         GameAudio.playBlockAudio();
@@ -150,8 +147,7 @@ public class Combat implements ConnectInfo{
                         character.decreaseStamina(Controller.HEAVY_STAMINA_COST + 3);
                         // Give the enemy player time to punish you for the parry
                         Thread.sleep(Controller.HEAVY_PARRY_STUN_LENGTH);
-                    }
-                    else if (typeOfAction == Controller.FEINT_ACTION) {
+                    } else if (typeOfAction == Controller.FEINT_ACTION) {
                         // Decrease stamina
                         if (character.getStamina() - Controller.FEINT_COST < 0)
                             character.setStamina(0);
@@ -162,14 +158,13 @@ public class Combat implements ConnectInfo{
                     // Player has parried his opponent.
                     else if (typeOfAction == Controller.ACTIVE_PARRY_ACTION) {
                         // Let the player know he was the one who parried and that he himself was not parried.
-                        flashGuard(loader);
+                        parryFlashGuard(loader);
                         GameAudio.playParryAudio();
                     }
                     // Play error if out of stamina.
                     else if (typeOfAction == Controller.NO_STAMINA_ACTION) {
                         GameAudio.playNoStaminaAudio();
-                    }
-                    else if (typeOfAction == Controller.INTERRUPTED_ACTION) {
+                    } else if (typeOfAction == Controller.INTERRUPTED_ACTION) {
                         // I'll have the player grunt when an attack is interrupted. So, reuse the playFeintAudio method
                         GameAudio.playFeintAudio();
                     }
@@ -196,21 +191,22 @@ public class Combat implements ConnectInfo{
 
     /**
      * When you parry, the guard will flash gold for one second.
-     * @param loader
-     * loader is the loader instance in PaintApplication.java
+     *
+     * @param loader loader is the loader instance in PaintApplication.java
      */
-    private static void flashGuard(FXMLLoader loader) {
+    private static void parryFlashGuard(FXMLLoader loader) {
         Polygon activeGuard = (Polygon) loader.getNamespace().get("ACTIVE_GUARD");
         Platform.runLater(() -> activeGuard.setFill(Color.web("#e6ff41")));
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                System.err.println(e + "\nFlashing guard error");
-            }
-            Platform.runLater(() -> activeGuard.setFill(Color.BLACK));
-        }).start();
+
+        try {
+            Thread.sleep(Controller.PARRY_NOTIFICATION_LENGTH);
+        } catch (InterruptedException e) {
+            System.err.println(e + "\nParry flashing guardFX error");
+        }
+        Platform.runLater(() -> activeGuard.setFill(Color.BLACK));
+
     }
+
     public static void setInputConnection() {
         new Thread(() -> {
             try {
@@ -241,21 +237,21 @@ public class Combat implements ConnectInfo{
 
     // This method watches for when the enemy manually updates his stamina or health.
     private static void startMonitoringEnemyHealthStamina(ObjectInputStream fromServerInput) {
-         new Thread(()->{
-             while (true) {
-                 try {
-                     HealthStaminaPackage healthStaminaPackage = (HealthStaminaPackage) fromServerInput.readObject();
-                     if (healthStaminaPackage.hp() == Integer.MAX_VALUE)
-                         Controller.setEnemyCharacterHP(character.getMaxHP());
-                     else if (healthStaminaPackage.hp() > 0) {
-                         Controller.decreaseEnemyHP(healthStaminaPackage.hp());
-                     }
-                     Controller.setEnemyStamina(healthStaminaPackage.stamina());
+        new Thread(() -> {
+            while (true) {
+                try {
+                    HealthStaminaPackage healthStaminaPackage = (HealthStaminaPackage) fromServerInput.readObject();
+                    if (healthStaminaPackage.hp() == Integer.MAX_VALUE)
+                        Controller.setEnemyCharacterHP(character.getMaxHP());
+                    else if (healthStaminaPackage.hp() > 0) {
+                        Controller.decreaseEnemyHP(healthStaminaPackage.hp());
+                    }
+                    Controller.setEnemyStamina(healthStaminaPackage.stamina());
 
-                 } catch (IOException | ClassNotFoundException e) {
-                     throw new RuntimeException(e);
-                 }
-             }
-         }).start();
+                } catch (IOException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 }

@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 
 /**
  * The server must be prepared to receive an object (and attack or a feint) and then an int
@@ -27,6 +28,7 @@ public class GameServer extends Application implements ConnectInfo {
         Pane pane = new Pane();
         TextArea textArea = new TextArea();
         textArea.setEditable(false);
+        textArea.setText("Server started at " + new Date() + "\n");
         pane.getChildren().add(textArea);
         Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
@@ -53,7 +55,7 @@ public class GameServer extends Application implements ConnectInfo {
 
                     Platform.runLater(() -> {
                         textArea.appendText("Player 1 IPV4: " +
-                                player1SocketCombat.getInetAddress().toString() + "\n");
+                                player1SocketCombat.getInetAddress().getHostAddress() + "\n");
                     });
                     ObjectOutputStream toPlayer1Combat = new ObjectOutputStream(player1SocketCombat.getOutputStream());
                     ObjectInputStream fromPlayer1Combat = new ObjectInputStream(player1SocketCombat.getInputStream());
@@ -84,7 +86,7 @@ public class GameServer extends Application implements ConnectInfo {
 
                     Platform.runLater(() -> {
                         textArea.appendText("Player 2 IPV4: " +
-                                player2SocketCombat.getInetAddress().toString() + "\n");
+                                player2SocketCombat.getInetAddress().getHostAddress() + "\n");
                     });
                     ObjectOutputStream toPlayer2Combat = new ObjectOutputStream(player2SocketCombat.getOutputStream());
                     ObjectInputStream fromPlayer2Combat = new ObjectInputStream(player2SocketCombat.getInputStream());

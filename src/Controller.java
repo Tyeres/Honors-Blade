@@ -22,10 +22,12 @@ public class Controller {
     static final double HEAVY_PARRY_WINDOW_OPENED_LENGTH = 1.0 / 3;
     static final double LIGHT_PARRY_WINDOW_CLOSED_LENGTH = 1.0 / 4;
     static final double LIGHT_PARRY_WINDOW_OPENED_LENGTH = 3.0 / 4;
-    // For a light parry, you should be rewarded with a heavy attack. With a heavy parry, you should be rewarded a light attack.
-    // Give extra time to react to your parry.
-    static final int LIGHT_PARRY_STUN_LENGTH = character.getHeavyAttack().getDuration() + 500;
-    static final int HEAVY_PARRY_STUN_LENGTH = character.getLightAttack().getDuration() + 400;
+    // The PARRY_NOTIFICATION_LENGTH is the time for the player to react to the fact he parried his opponent.
+    static final int PARRY_NOTIFICATION_LENGTH = 900;
+    // For a light parry, you should be rewarded with one heavy attack. With a heavy parry, you should be rewarded one light attack.
+    static final int LIGHT_PARRY_STUN_LENGTH = PARRY_NOTIFICATION_LENGTH + character.getHeavyAttack().getDuration() + 200;
+    static final int HEAVY_PARRY_STUN_LENGTH = PARRY_NOTIFICATION_LENGTH + character.getLightAttack().getDuration() + 200;
+    // The player cannot attack or change his guard during this period.
     static final int ATTACK_INTERRUPT_STUN_LENGTH = 500;
 
     private static int combatPort;
