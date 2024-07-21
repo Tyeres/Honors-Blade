@@ -7,18 +7,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Controller {
+
+    private static final Character character = new Character();
+    // This is used to keep track of the enemy's HP and stamina. It should initially match the HP of your player too.
+    private static int enemyCharacterHP = character.getHp();
+
     // These two objects are serializable. So, they cannot have static objects within them. So, we will create new objects to use the attack numbers.
     public static final LightAttack lightAttack = new LightAttack();
     public static final HeavyAttack heavyAttack = new HeavyAttack();
 
     // Parry window is one third of the attack length. Attack window is closed for two thirds of the time length initially.
-    static final double PARRY_WINDOW_CLOSED_LENGTH = 2.0 / 3;
+    static final double HEAVY_PARRY_WINDOW_CLOSED_LENGTH = 2.0 / 3;
     // Parry window is open for one third of the attack length
-    static final double PARRY_WINDOW_OPENED_LENGTH = 1.0 / 3;
-    static final int LIGHT_PARRY_STUN_LENGTH = 1400;
-    static final int HEAVY_PARRY_STUN_LENGTH = 700;
+    static final double HEAVY_PARRY_WINDOW_OPENED_LENGTH = 1.0 / 3;
+    static final double LIGHT_PARRY_WINDOW_CLOSED_LENGTH = 1.0 / 4;
+    static final double LIGHT_PARRY_WINDOW_OPENED_LENGTH = 3.0 / 4;
+    // For a light parry, you should be rewarded with a heavy attack. With a heavy parry, you should be rewarded a light attack.
+    // Give extra time to react to your parry.
+    static final int LIGHT_PARRY_STUN_LENGTH = character.getHeavyAttack().getDuration() + 500;
+    static final int HEAVY_PARRY_STUN_LENGTH = character.getLightAttack().getDuration() + 400;
     static final int ATTACK_INTERRUPT_STUN_LENGTH = 500;
-    public static final int FEINT_COST = 5;
 
     private static int combatPort;
     private static int defensePort;
@@ -36,9 +44,6 @@ public class Controller {
     private static ProgressBar enemyHPBar;
     private static ProgressBar enemyStaminaBar;
 
-    private static final Character character = new Character();
-    // This is used to keep track of the enemy's HP and stamina. It should initially match the HP of your player too.
-    private static int enemyCharacterHP = character.getHp();
     private static int enemyCharacterStamina = character.getMaxStamina();
     public static void decreaseEnemyHP(int damage) {
         setEnemyCharacterHP(enemyCharacterHP - damage);
@@ -63,6 +68,7 @@ public class Controller {
 
     public static final int HEAVY_STAMINA_COST = 7;
     public static final int LIGHT_STAMINA_COST = 5;
+    public static final int FEINT_COST = 5;
 
     public static Character getCharacter() {
         return character;

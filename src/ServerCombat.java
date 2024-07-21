@@ -56,7 +56,7 @@ public class ServerCombat {
                             ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                             // Wait for the attack to land go through
-                            Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_CLOSED_LENGTH));
+                            Thread.sleep((long) (action.getDuration() * Controller.LIGHT_PARRY_WINDOW_CLOSED_LENGTH));
 
                             // This starts the parry window.
                             // If a right click has been used while this was open, then getBeenParried should read as true
@@ -64,7 +64,7 @@ public class ServerCombat {
                             // The opponent client is waiting to receive a value to know when the parry window opens.
                             ServerDefense.getOpponentDefenseToClient(playerType).writeInt(0);
                             ServerDefense.getOpponentDefenseToClient(playerType).flush();
-                            Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
+                            Thread.sleep((long) (action.getDuration() * Controller.LIGHT_PARRY_WINDOW_OPENED_LENGTH));
 
                             setParryWindow(playerType, false);
 
@@ -161,7 +161,7 @@ public class ServerCombat {
 
                             // Wait for the attack to land go through
                             // Parry window is two thirds of the attack length. Attack window is closed for 1 third MS initially.
-                            Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_CLOSED_LENGTH));
+                            Thread.sleep((long) (action.getDuration() * Controller.HEAVY_PARRY_WINDOW_CLOSED_LENGTH));
 
 
                             // Do not open the parry window if the player feints
@@ -175,7 +175,7 @@ public class ServerCombat {
                                 ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                                 // Parry window is open for two thirds of the attack length
-                                Thread.sleep((long) (action.getDuration() * Controller.PARRY_WINDOW_OPENED_LENGTH));
+                                Thread.sleep((long) (action.getDuration() * Controller.HEAVY_PARRY_WINDOW_OPENED_LENGTH));
 
 
                                 setParryWindow(playerType, false);
