@@ -72,8 +72,8 @@ public class ServerCombat {
                             ServerDefense.getOpponentDefenseToClient(playerType).writeInt(0);
                             ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
-                            int enemyStance = returnEnemyGuard(playerType);
-                            int myStance = returnPlayerGuard(playerType);
+                            int enemyStance = ServerDefense.getEnemyGuard(playerType);
+                            int myStance = ServerDefense.getEnemyGuard(playerType);
 
                             // Write action
 
@@ -136,7 +136,7 @@ public class ServerCombat {
                     else if (action instanceof HeavyAttack) {
                         // If enemy parry window is open
                         // Check first if it's a parry instead of an attack and that the guards are equal
-                        if (returnPlayerGuard(playerType) == returnEnemyGuard(playerType) && getOpponentParryWindow(playerType)) {
+                        if (ServerDefense.getPlayerGuard(playerType) == ServerDefense.getEnemyGuard(playerType) && getOpponentParryWindow(playerType)) {
                             // The opponent has been parried
                             setOpponentBeenParried(playerType, true);
                             // Tell the one who parries that the parry was successful
@@ -191,8 +191,8 @@ public class ServerCombat {
                             ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
 
-                            int enemyStance = returnEnemyGuard(playerType);
-                            int myStance = returnPlayerGuard(playerType);
+                            int enemyStance = ServerDefense.getEnemyGuard(playerType);
+                            int myStance = ServerDefense.getPlayerGuard(playerType);
 
                             // Write action
 
@@ -269,17 +269,7 @@ public class ServerCombat {
         }).start();
     }
 
-    private static int returnEnemyGuard(int playerType) {
-        if (playerType == 1)
-            return ServerDefense.getPlayer2Guard().get();
-        return ServerDefense.getPlayer1Guard().get();
-    }
 
-    private static int returnPlayerGuard(int playerType) {
-        if (playerType == 1)
-            return ServerDefense.getPlayer1Guard().get();
-        return ServerDefense.getPlayer2Guard().get();
-    }
 
     public static void setParryWindow(int playerType, boolean value) {
         if (playerType == 1) {

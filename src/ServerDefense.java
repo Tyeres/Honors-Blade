@@ -1,6 +1,3 @@
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
@@ -11,8 +8,8 @@ public class ServerDefense {
     private static boolean silentGuardChange2 = false;
 
     // The game starts with the guards pointing up
-    static private final IntegerProperty player1Guard = new SimpleIntegerProperty(Controller.UP_GUARD);
-    static private final IntegerProperty player2Guard = new SimpleIntegerProperty(Controller.UP_GUARD);
+    static private int player1Guard = Controller.UP_GUARD;
+    static private int player2Guard = Controller.UP_GUARD;
 
     private static ObjectOutputStream toPlayer1Defense;
     private static ObjectOutputStream toPlayer2Defense;
@@ -22,22 +19,6 @@ public class ServerDefense {
 
         ServerDefense.toPlayer1Defense = toPlayer1Defense;
         ServerDefense.toPlayer2Defense = toPlayer2Defense;
-
-        // Player 1 tells player 2 about guard change
-        player1Guard.addListener(e->{
-            // Only run if it's set NOT to silently run
-                if (!silentGuardChange1) {
-                    tellClientEnemyChangeGuard(toPlayer2Defense, 1);
-                }
-        });
-
-        // Player 2 tells player 1 about guard change
-        player2Guard.addListener(e->{
-            // Only run if it's set NOT to silently run
-                if (!silentGuardChange2) {
-                    tellClientEnemyChangeGuard(toPlayer1Defense, 2);
-                }
-        });
     }
 
     private static void tellClientEnemyChangeGuard(ObjectOutputStream toOpponent2Defense,int playerType) {
@@ -56,29 +37,45 @@ public class ServerDefense {
         else silentGuardChange2 = value;
     }
 
-    public static IntegerProperty getPlayer1Guard() {
+    public static int getPlayer1Guard() {
         return player1Guard;
     }
 
-    public static IntegerProperty getPlayer2Guard() {
+    public static int getPlayer2Guard() {
         return player2Guard;
     }
 
     public static void setPlayerGuard(int playerGuard, int playerType) {
         if (playerType == 1) {
-            ServerDefense.player1Guard.set(playerGuard);
+            player1Guard = playerGuard;
+            // Player 1 tells player 2 about guard change.
+            // Only run if it's set NOT to silently run
+            if (!silentGuardChange1) {
+                tellClientEnemyChangeGuard(toPlayer2Defense, 1);
+            }
         }
-        else
-            ServerDefense.player2Guard.set(playerGuard);
+        else {
+            player2Guard = playerGuard;
+            // Player 2 tells player 1 about guard change
+            // Only run if it's set NOT to silently run
+            if (!silentGuardChange2) {
+                tellClientEnemyChangeGuard(toPlayer1Defense, 2);
+            }
+        }
     }
     public static int getPlayerGuard(int playerType) {
         if (playerType == 1)
-            return player1Guard.get();
-        return player2Guard.get();
+            return player1Guard;
+        return player2Guard;
     }
     public static ObjectOutputStream getOpponentDefenseToClient(int playerType) {
         if (playerType == 2)
             return toPlayer1Defense;
         return toPlayer2Defense;
+    }
+    public static int getEnemyGuard(int playerType) {
+        if (playerType == 1)
+            return getPlayer2Guard();
+        return getPlayer1Guard();
     }
 }

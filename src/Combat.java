@@ -41,6 +41,7 @@ public class Combat implements ConnectInfo {
             if (event.getCode().toString().equals("Q")) {
                 try {
                     toServerInput.writeObject("Q");
+                    toServerInput.flush();
                 } catch (IOException exception) {
                     System.err.println(exception);
                 }
