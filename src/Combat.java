@@ -158,9 +158,9 @@ public class Combat implements ConnectInfo {
                     }
                     // Player has parried his opponent.
                     else if (typeOfAction == Controller.ACTIVE_PARRY_ACTION) {
+                        GameAudio.playParryAudio();
                         // Let the player know he was the one who parried and that he himself was not parried.
                         parryFlashGuard(loader);
-                        GameAudio.playParryAudio();
                     }
                     // Play error if out of stamina.
                     else if (typeOfAction == Controller.NO_STAMINA_ACTION) {
