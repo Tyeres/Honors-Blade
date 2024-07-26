@@ -73,7 +73,7 @@ public class ServerCombat {
                             ServerDefense.getOpponentDefenseToClient(playerType).flush();
 
                             int enemyStance = ServerDefense.getEnemyGuard(playerType);
-                            int myStance = ServerDefense.getEnemyGuard(playerType);
+                            int myStance = ServerDefense.getPlayerGuard(playerType);
 
                             // Write action
 
